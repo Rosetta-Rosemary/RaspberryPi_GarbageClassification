@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<YG_RTLS>
+    <Anchor_list>
+        <Anchor z="0" id="1" MA_ID="" y="1789" x="50" ant_dly="" type="2"/>
+        <Anchor z="0" id="2" MA_ID="" y="1840" x="2970" ant_dly="" type="2"/>
+        <Anchor z="0" id="3" MA_ID="" y="70" x="2940" ant_dly="" type="2"/>
+        <Anchor z="0" id="4" MA_ID="" y="9" x="-19" ant_dly="" type="2"/>
+    </Anchor_list>
+    <Anchor_Group id="1" map_id="0" type="2">
+        <Member id="1"/>
+        <Member id="2"/>
+        <Member id="3"/>
+        <Member id="4"/>
+    </Anchor_Group>
+    <CONFIG version="1"/>
+</YG_RTLS>
