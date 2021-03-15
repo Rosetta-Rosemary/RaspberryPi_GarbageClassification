@@ -4,14 +4,17 @@ XmlReader * XmlReader::instance;
 
 XmlReader::XmlReader()
 {
+    log = LogService::get_instance();
     bool bSuccess = XmlLoad();
     if (!bSuccess)
     {
-        printf("Xml Files Load Fail!\n");
+        string str = "Xml Files Load Fail!\n";
+        log->setStringLog(str);
     }
     else 
     {
-        printf("Xml Files Load Success!\n");
+        string str = "Xml Files Load Success!\n";
+        log->setStringLog(str);
     }
 }
 
@@ -23,9 +26,15 @@ XmlReader::~XmlReader()
 bool XmlReader::XmlLoad()
 {
     m_ClassInfo.clear();
-    QFile xmlFile("./[Class]Table.xml");
+    QString filedir = "./[Class]Table.xml";
+    QFile xmlFile(filedir);
+    
+    QString str = "Xml File dir is " + filedir + "\n";
+    log->setQStringLog(str);
+
     if (!xmlFile.open(QFile::ReadOnly))
     {
+        log->setStringLog(string("Open Xml File Failed"));
         return false;
     }
     QDomDocument docXML;

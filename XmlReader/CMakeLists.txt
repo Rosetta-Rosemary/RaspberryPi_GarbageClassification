@@ -7,7 +7,7 @@ include_directories("./")
 find_package(Qt5Core CONFIG REQUIRED)
 find_package(Qt5Xml CONFIG REQUIRED)
 
-include_directories(${PROJECT_SOURCE_DIR}/LogServer)
+include_directories("${PROJECT_SOURCE_DIR}/LogService")
 
 add_library(XmlReader_shared SHARED ${libXmlReader})
 target_link_libraries(XmlReader_shared  Qt5::Core 

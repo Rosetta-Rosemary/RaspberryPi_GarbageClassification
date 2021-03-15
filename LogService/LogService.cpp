@@ -1,8 +1,11 @@
 #include <LogService.h>
 
+LogService * LogService::instance;
+
 LogService::LogService()
 {
     cout << "LogService Create" << endl;
+    Init();
 }
 
 LogService::~LogService()
@@ -21,7 +24,7 @@ void LogService::ExitLogService()
     m_bRun = false;
 }
 
-void LogService::setLog(string &str)
+void LogService::setStringLog(const string &str)
 {
     QString strDatatime = "[" + m_CurrentTime.toString("yyyy-MM-dd") + "]";
     string LogString = strDatatime.toStdString() + " " + str;
@@ -33,6 +36,12 @@ void LogService::setLog(string &str)
         m_Logfile->flush();
         this->FileClose();
     }
+}
+
+void LogService::setQStringLog(const QString &qstr)
+{
+    string str = qstr.toStdString();
+    this->setStringLog(str);
 }
 
 void LogService::TimerRun()
@@ -61,7 +70,7 @@ void LogService::TimerOut()
         {
             strlog = "ChangeLogFile Fail!";
         }
-        setLog(strlog);
+        setStringLog(strlog);
     }
 }
 
@@ -90,7 +99,7 @@ bool LogService::ChangeLogFile()
 
 bool LogService::FileOpen()
 {
-    if(!m_Logfile->open(QFile::WriteOnly | QFile::Text))
+    if(!m_Logfile->open(QFile::WriteOnly | QFile::Text | QFile::Append))
     {
         return false;
     }

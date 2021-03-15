@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
+#include <LogService.h>
 
 using namespace std;
 
@@ -46,6 +47,7 @@ private:
 protected:
     static XmlReader * instance;
     map<int, SortBill> m_ClassInfo;
+    LogService *log;
 };
 
 

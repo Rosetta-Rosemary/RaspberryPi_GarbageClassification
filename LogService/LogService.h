@@ -19,11 +19,20 @@ class LogService : public QObject
     Q_OBJECT
 
 public:
-    void Init();
-    void setLog(string &str);
+    static LogService * get_instance()
+    {
+        if (instance == nullptr)
+        {
+            instance = new LogService;
+        }
+        return instance;
+    };
+
+    void setStringLog(const string &str);
+    void setQStringLog(const QString &qstr);
 
     void ExitLogService();
-    LogService();
+
     ~LogService();
 
 signals:
@@ -32,19 +41,20 @@ private slots:
     void TimerOut();
 
 private:
-    
+    LogService();
+    void Init();
     void TimerRun();
     bool FileOpen();
     void FileClose();
     bool ChangeLogFile();
     QDateTime GetLocalTime();
 
+protected:
+    static LogService * instance;
     bool m_bInit = false;
     bool m_bRun = true;
-
     QDateTime m_CurrentTime;
     QTimer *m_pTimer;
-
     QDir m_dir;
     QFile *m_Logfile;
     QString m_qstFilenames;
