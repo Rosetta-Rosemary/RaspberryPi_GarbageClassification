@@ -8,12 +8,12 @@ XmlReader::XmlReader()
     bool bSuccess = XmlLoad();
     if (!bSuccess)
     {
-        string str = "Xml Files Load Fail!\n";
+        string str = "Xml Files Load Fail!";
         log->setStringLog(str);
     }
     else 
     {
-        string str = "Xml Files Load Success!\n";
+        string str = "Xml Files Load Success!";
         log->setStringLog(str);
     }
 }
@@ -29,7 +29,7 @@ bool XmlReader::XmlLoad()
     QString filedir = "./[Class]Table.xml";
     QFile xmlFile(filedir);
     
-    QString str = "Xml File dir is " + filedir + "\n";
+    QString str = "Xml File dir is " + filedir;
     log->setQStringLog(str);
 
     if (!xmlFile.open(QFile::ReadOnly))
@@ -61,10 +61,6 @@ bool XmlReader::XmlLoad()
                     QDomElement indexElement = nodeIndex.toElement();
                     if (indexElement.hasAttribute("Class")) 
                     {
-                        qDebug() << nodeIndex.nodeName() << ":" 
-                        << nodeIndex.toElement().attribute("id") << "  " 
-                        << nodeIndex.toElement().attribute("Name") << "  " 
-                        << nodeIndex.toElement().attribute("Class");
                         QString qsId = nodeIndex.toElement().attribute("id");
                         QString qsName = nodeIndex.toElement().attribute("Name");
                         QString qsClass = nodeIndex.toElement().attribute("Class");
@@ -74,6 +70,14 @@ bool XmlReader::XmlLoad()
                             bill.strClasses = qsClass;
                             int id = qsId.toInt();
                             m_ClassInfo.insert(pair<int,SortBill>(id,bill));
+                        }
+                        {
+                            QString qstr;
+                            qstr = nodeIndex.nodeName() + "\t"
+                                + qsId + "\t" 
+                                + qsName + "\t" 
+                                + qsClass;
+                            log->setQStringLog(qstr);
                         }
                     }
                 }

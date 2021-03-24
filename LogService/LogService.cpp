@@ -26,8 +26,10 @@ void LogService::ExitLogService()
 
 void LogService::setStringLog(const string &str)
 {
+    QDateTime CurrentTime = QDateTime::currentDateTime();
     QString strDatatime = "[" + m_CurrentTime.toString("yyyy-MM-dd") + "]";
-    string LogString = strDatatime.toStdString() + " " + str;
+    QString strCurrentTime = "[" + CurrentTime.toString("hh-mm-ss.zzz") + "]";
+    string LogString = strDatatime.toStdString() + strCurrentTime.toStdString() +" " + str + "\n";
     unique_lock<mutex> writelock(m_mtxLogWrite);
     if(this->FileOpen());
     {
@@ -40,7 +42,7 @@ void LogService::setStringLog(const string &str)
 
 void LogService::setQStringLog(const QString &qstr)
 {
-    string str = qstr.toStdString();
+    string str = qstr2str(qstr);
     this->setStringLog(str);
 }
 

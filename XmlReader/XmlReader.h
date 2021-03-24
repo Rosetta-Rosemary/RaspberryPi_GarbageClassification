@@ -15,12 +15,27 @@
 
 using namespace std;
 
+/*
+    使用参考：
+    XmlReader *reader = XmlReader::get_instance();
+
+    map<int, SortBill>ClassTable = reader->getVecClassInfo();
+    map<int, SortBill>::iterator iter = ClassTable.begin();
+    cout << "---------------------------" << endl;
+    for (iter; iter != ClassTable.end(); iter++)
+    {
+        qDebug()<< iter->first << " "
+                << (iter->second).strClasses << " "
+                << (iter->second).strName;
+    }
+
+*/
+
 struct SortBill
 {
     QString strName;
     QString strClasses;
 };
-
 
 class XmlReader : public QObject
 {
@@ -39,7 +54,6 @@ public:
 
     map<int, SortBill> getVecClassInfo();
    
-
 private:
     XmlReader();
     bool XmlLoad();

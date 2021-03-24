@@ -2,7 +2,8 @@
 
 udpServer::udpServer(QObject *parent) : QObject(parent)
 {
-    std::cout << "Udp Server Start" << std::endl;
+    log = LogService::get_instance();
+    log->setStringLog(std::string("Udp Server Start"));
     udpServerInit();
 }
 
@@ -13,7 +14,8 @@ udpServer::~udpServer()
 
 udpServer::udpServer(QHostAddress ip, quint16 port)
 {
-    std::cout << "Udp Server Start" << std::endl;
+    log = LogService::get_instance();
+    log->setStringLog(std::string("Udp Server Start"));
     udpServerInit(ip,port);
 }
 
@@ -22,30 +24,34 @@ void udpServer::udpServerInit()
     QHostAddress ip = QHostAddress("127.0.0.1");
     quint16 port = 26601;
     udpsocket = new QUdpSocket(this);
-    std::cout << "UdpServer " << ip.toString().toStdString() << ":" << port << std::endl;
+    std::string str = "UdpServer " + ip.toString().toStdString() + ":" + QString::number(port).toStdString();
+    log->setStringLog(str);
     //绑定地址
     ipaddr = ip;
     qport = port;
     udpsocket->bind(ip, 26601);
     //绑定读取信号
-    bool bconnect = connect(udpsocket,SIGNAL(readyRead()),this,SLOT(getMsg()),Qt::AutoConnection);
-    if(bconnect){std::cout << "connect success" << std::endl;}
-    std::cout << "UdpServer Init success " << std::endl;
+    bool bconnect = connect(udpsocket,SIGNAL(readyRead()),
+                        this,SLOT(getMsg()),Qt::AutoConnection);
+    if(bconnect){log->setStringLog(std::string("connect success"));}
+    log->setStringLog(std::string("UdpServer Init success"));
 }
 
 void udpServer::udpServerInit(QHostAddress ip, quint16 port)
 {
-    std::cout << "UdpServer " << ip.toString().toStdString() << ":" << port << std::endl;
+    std::string str = "UdpServer " + ip.toString().toStdString() + ":" + QString::number(port).toStdString();
+    log->setStringLog(str);
     //绑定地址
     ipaddr = ip;
     qport = port;
     udpsocket = new QUdpSocket(this);
     udpsocket->bind(ipaddr, 26601);
     //绑定读取信号
-    bool bconnect = connect(udpsocket,SIGNAL(readyRead()),this,SLOT(getMsg()),Qt::AutoConnection);
-    if(bconnect){std::cout << "connect success" << std::endl;}
+    bool bconnect = connect(udpsocket,SIGNAL(readyRead()),
+                        this,SLOT(getMsg()),Qt::AutoConnection);
+    if(bconnect){log->setStringLog(std::string("connect success"));}
     udpsocket->waitForBytesWritten();
-    std::cout << "UdpServer Init success " << std::endl;
+    log->setStringLog(std::string("UdpServer Init success"));
 }
 
 void udpServer::getMsg()
@@ -53,10 +59,16 @@ void udpServer::getMsg()
     char buf[100];
     //读取发送过来的消息
     udpsocket->readDatagram(buf,100);
-    std::cout << "udp get message " << std::endl;
+    log->setStringLog(std::string("UdpServer get message"));
     strGetMsg = buf;
-    std::cout << "[" << std::this_thread::get_id() << "]";
-    std::cout << "Message is : " << strGetMsg << std::endl;
+    {
+        auto myid = std::this_thread::get_id();
+        std::stringstream ss;
+        ss << myid;
+        std::string str = "[" + ss.str() + "]";
+        str = str + "Message is : " +  strGetMsg;
+        log->setStringLog(str);
+    }
     emit(getMsgSuccess(strGetMsg));
 }
 
@@ -68,7 +80,8 @@ void udpServer::udpGetMsg(std::string &strMsg)
 
 udpClient::udpClient()
 {
-    std::cout << "Udp Client Get Link Now" << std::endl;
+    log = LogService::get_instance();
+    log->setStringLog(std::string("Udp Client Get Link Now"));
     udpClientInit();
 }
 
@@ -79,7 +92,8 @@ udpClient::~udpClient()
 
 udpClient::udpClient(QHostAddress ip, quint16 port)
 {
-    std::cout << "UdpClient Link to Server : " << ip.toString().toStdString() << ":" << port << std::endl;   
+    std::string str = "UdpServer " + ip.toString().toStdString() + ":" + QString::number(port).toStdString();
+    log->setStringLog(str);
     udpClientInit(ip, port);
 }
 
@@ -92,6 +106,7 @@ void udpClient::udpClientInit()
 
 void udpClient::udpClientInit(QHostAddress ip, quint16 port)
 {
+    connect(this,SIGNAL(sendMsg(std::string)),this,SLOT(sendUdpMsg(std::string)));
     ipAddress = ip;
     qPort = port;
 }

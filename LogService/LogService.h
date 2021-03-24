@@ -11,6 +11,7 @@
 #include <QThread>
 #include <thread>
 #include <mutex>
+#include <QDebug>
 
 using namespace std;
 
@@ -48,6 +49,12 @@ private:
     void FileClose();
     bool ChangeLogFile();
     QDateTime GetLocalTime();
+
+    string qstr2str(const QString &qstr)
+    {
+        QByteArray cdata = qstr.toLocal8Bit();
+        return string(cdata);
+    }
 
 protected:
     static LogService * instance;

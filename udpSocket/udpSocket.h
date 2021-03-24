@@ -17,6 +17,8 @@
 #include <QObject>
 #include <QDebug>
 #include <thread>
+#include <sstream>
+#include <LogService.h>
 
 class udpServer : public QObject
 {
@@ -44,6 +46,7 @@ private:
     QHostAddress ipaddr;
     quint16 qport;
     std::string strGetMsg;
+    LogService *log;
 };
 
 class udpClient : public QObject
@@ -65,6 +68,7 @@ private:
     QUdpSocket udpsocket;
     QHostAddress ipAddress;
     quint16 qPort;
+    LogService *log;
 };
 
 #endif
