@@ -12,6 +12,7 @@
 #include <thread>
 #include <mutex>
 #include <QDebug>
+#include <list>
 
 using namespace std;
 
@@ -29,10 +30,42 @@ public:
         return instance;
     };
 
+    static bool addLogQStringTask(const QString qstr)
+    {
+        m_queLogTask.push_back(qstr);
+        return true;
+    };
+
+    static bool addLogStdTask(const std::string str)
+    {
+        QString qstr = QString::fromStdString(str);
+        return addLogQStringTask(qstr);
+    };
+
+    static void LogTaskMgr(LogService * log)
+    {
+        using namespace std;
+        cout << "This is LogTaskMgr" << endl;
+        while(log->IsExit())
+        {
+            if(!LogService::m_queLogTask.empty())
+            {
+                list<QString>::iterator iter = LogService::m_queLogTask.begin();
+                for(iter; iter != LogService::m_queLogTask.end(); )
+                {
+                    QString qstr = *iter;
+                    log->writeLog(*iter);
+                    iter++;
+                    LogService::m_queLogTask.pop_front();
+                }
+            }
+        }
+        cout << "This is LogTaskMgr With Exit" << endl;
+    };
     void setStringLog(const string &str);
     void setQStringLog(const QString &qstr);
-
     void ExitLogService();
+    bool IsExit(){ return m_bRun;};
 
     ~LogService();
 
@@ -50,6 +83,8 @@ private:
     bool ChangeLogFile();
     QDateTime GetLocalTime();
 
+    bool writeLog(const QString &aqstrlog);
+
     string qstr2str(const QString &qstr)
     {
         QByteArray cdata = qstr.toLocal8Bit();
@@ -58,6 +93,7 @@ private:
 
 protected:
     static LogService * instance;
+    static std::list<QString> m_queLogTask;
     bool m_bInit = false;
     bool m_bRun = true;
     QDateTime m_CurrentTime;
@@ -66,6 +102,8 @@ protected:
     QFile *m_Logfile;
     QString m_qstFilenames;
     std::mutex m_mtxLogWrite;
+
+    
   
 };
 

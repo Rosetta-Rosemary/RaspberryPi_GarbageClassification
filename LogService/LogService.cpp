@@ -1,6 +1,7 @@
 #include <LogService.h>
 
 LogService * LogService::instance;
+std::list<QString> LogService::m_queLogTask;
 
 LogService::LogService()
 {
@@ -24,26 +25,33 @@ void LogService::ExitLogService()
     m_bRun = false;
 }
 
-void LogService::setStringLog(const string &str)
+bool LogService::writeLog(const QString &aqstrlog)
 {
+    using namespace std;
+    cout << "Write Log" << endl;
     QDateTime CurrentTime = QDateTime::currentDateTime();
     QString strDatatime = "[" + m_CurrentTime.toString("yyyy-MM-dd") + "]";
     QString strCurrentTime = "[" + CurrentTime.toString("hh-mm-ss.zzz") + "]";
-    string LogString = strDatatime.toStdString() + strCurrentTime.toStdString() +" " + str + "\n";
+    QString LogString = strDatatime + strCurrentTime + " " + aqstrlog + "\n";
     unique_lock<mutex> writelock(m_mtxLogWrite);
     if(this->FileOpen());
     {
         QTextStream out(m_Logfile);
-        out << QString::fromStdString(LogString);
+        out << LogString;
         m_Logfile->flush();
         this->FileClose();
     }
 }
 
+void LogService::setStringLog(const string &str)
+{
+    QString qstr = QString::fromStdString(str);
+    this->setQStringLog(qstr);
+}
+
 void LogService::setQStringLog(const QString &qstr)
 {
-    string str = qstr2str(qstr);
-    this->setStringLog(str);
+    addLogQStringTask(qstr);
 }
 
 void LogService::TimerRun()
@@ -127,5 +135,5 @@ void LogService::Init()
     m_Logfile = new QFile(m_qstFilenames);
     m_bInit = true;
     this->TimerRun();
-
+    
 }
