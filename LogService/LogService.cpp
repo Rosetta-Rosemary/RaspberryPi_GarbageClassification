@@ -1,6 +1,7 @@
 #include <LogService.h>
 
 LogService * LogService::instance;
+LogMgrThread * LogMgrThread::instance;
 std::list<QString> LogService::m_queLogTask;
 
 LogService::LogService()
@@ -135,5 +136,4 @@ void LogService::Init()
     m_Logfile = new QFile(m_qstFilenames);
     m_bInit = true;
     this->TimerRun();
-    
 }

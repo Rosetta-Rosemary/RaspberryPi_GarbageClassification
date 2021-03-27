@@ -51,7 +51,8 @@ public:
             if(!LogService::m_queLogTask.empty())
             {
                 list<QString>::iterator iter = LogService::m_queLogTask.begin();
-                for(iter; iter != LogService::m_queLogTask.end(); )
+                for(iter = LogService::m_queLogTask.begin(); 
+                    iter != LogService::m_queLogTask.end(); )
                 {
                     QString qstr = *iter;
                     log->writeLog(*iter);
@@ -59,21 +60,28 @@ public:
                     LogService::m_queLogTask.pop_front();
                 }
             }
+            else
+            {
+                continue;
+            }
         }
-        cout << "This is LogTaskMgr With Exit" << endl;
+        printf("Mgr Exit Now in LogServer\n");;
     };
     void setStringLog(const string &str);
     void setQStringLog(const QString &qstr);
     void ExitLogService();
     bool IsExit(){ return m_bRun;};
-
+    bool IsStat(){ return m_start;};
+    void Start(){ m_start = true;};
     ~LogService();
+
+    void Exit() { m_bRun = false;};
 
 signals:
 
 private slots:
     void TimerOut();
-
+    
 private:
     LogService();
     void Init();
@@ -96,15 +104,53 @@ protected:
     static std::list<QString> m_queLogTask;
     bool m_bInit = false;
     bool m_bRun = true;
+    bool m_start = false;
     QDateTime m_CurrentTime;
     QTimer *m_pTimer;
     QDir m_dir;
     QFile *m_Logfile;
     QString m_qstFilenames;
     std::mutex m_mtxLogWrite;
+};
 
-    
-  
+class LogMgrThread : public QThread
+{
+public:
+    static LogMgrThread * get_instance()
+    {
+        if (instance == nullptr)
+        {
+            LogService *log = LogService::get_instance();
+            instance = new LogMgrThread;
+        }
+        return instance;
+    };
+
+    void stop() 
+    { //用于结束线程
+        is_runnable =false;
+        this->Exit();
+        qDebug()<<"thread stop"<<QThread::currentThreadId();
+    };
+    void Exit() {LogService::get_instance()->Exit();};
+
+private:
+    LogMgrThread() {};
+    void run() 
+    {
+        qDebug()<<"thread start:"<<QThread::currentThreadId();
+        while(1)
+        {
+            if(!is_runnable) break;
+            LogService::LogTaskMgr(LogService::get_instance());
+        }
+        printf("Mgr Exit Now in LogMgrThread\n");
+    };
+
+protected:
+    static LogMgrThread * instance;
+    bool is_runnable = true;
+
 };
 
 #endif
