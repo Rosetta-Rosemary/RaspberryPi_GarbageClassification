@@ -4,11 +4,13 @@ set(libKeywordAnalsys ./KeywordAnalsys.cpp)
 
 include_directories("./")
 
-find_package(Qt5Core CONFIG REQUIRED)
 
+find_package(Qt5Core CONFIG REQUIRED)
+include_directories("${PROJECT_SOURCE_DIR}/LogService")
 add_library(KeywordAnalsys_shared SHARED ${libKeywordAnalsys})
 #add_library( PythonInterface_static STATIC ${libPythonInterface})
 target_link_libraries(KeywordAnalsys_shared Qt5::Core)
+target_link_libraries(KeywordAnalsys_shared LogService_shared)
 
 # 3、cmake在构建一个新的target时，会尝试清理掉其他使用这个名字的库，
 # 因此，在构建libhello.a时，就会清理掉libhello.so

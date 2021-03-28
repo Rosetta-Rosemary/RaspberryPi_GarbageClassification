@@ -9,12 +9,12 @@ XmlReader::XmlReader()
     if (!bSuccess)
     {
         string str = "Xml Files Load Fail!";
-        log->setStringLog(str);
+        log->setLog(str);
     }
     else 
     {
         string str = "Xml Files Load Success!";
-        log->setStringLog(str);
+        log->setLog(str);
     }
 }
 
@@ -30,11 +30,11 @@ bool XmlReader::XmlLoad()
     QFile xmlFile(filedir);
     
     QString str = "Xml File dir is " + filedir;
-    log->setQStringLog(str);
+    log->setLog(str);
 
     if (!xmlFile.open(QFile::ReadOnly))
     {
-        log->setStringLog(string("Open Xml File Failed"));
+        log->setLog(string("Open Xml File Failed"));
         return false;
     }
     QDomDocument docXML;
@@ -77,7 +77,7 @@ bool XmlReader::XmlLoad()
                                 + qsId + "\t" 
                                 + qsName + "\t" 
                                 + qsClass;
-                            log->setQStringLog(qstr);
+                            log->setLog(qstr);
                         }
                     }
                 }

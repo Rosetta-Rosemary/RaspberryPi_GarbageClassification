@@ -30,16 +30,16 @@ public:
         return instance;
     };
 
-    static bool addLogQStringTask(const QString qstr)
+    static bool addLog(const QString qstr)
     {
         m_queLogTask.push_back(qstr);
         return true;
     };
 
-    static bool addLogStdTask(const std::string str)
+    static bool addLog(const std::string str)
     {
         QString qstr = QString::fromStdString(str);
-        return addLogQStringTask(qstr);
+        return addLog(qstr);
     };
 
     static void LogTaskMgr(LogService * log)
@@ -67,8 +67,8 @@ public:
         }
         printf("Mgr Exit Now in LogServer\n");;
     };
-    void setStringLog(const string &str);
-    void setQStringLog(const QString &qstr);
+    void setLog(const string &str);
+    void setLog(const QString &qstr);
     void ExitLogService();
     bool IsExit(){ return m_bRun;};
     bool IsStat(){ return m_start;};

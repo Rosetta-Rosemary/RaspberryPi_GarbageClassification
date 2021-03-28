@@ -9,12 +9,21 @@
 #include <cstring>
 #include <map>
 
+#include <LogService.h>
+
+struct ServerTask
+{
+    std::string strIp;
+    int iPort;
+    int iTaskType;
+};
+
 class KeywordAnalsys : public QObject
 {
     Q_OBJECT
 public:
     ~KeywordAnalsys();
-    static KeywordAnalsys *get_instacne()
+    static KeywordAnalsys * get_instacne()
     {
         using namespace std;
         cout << "get instance" << endl;
@@ -30,7 +39,7 @@ private:
     KeywordAnalsys();
     KeywordAnalsys(const KeywordAnalsys &);
 
-    std::map<int, QString> KeywordMap;
+    std::map<QString, int> KeywordMap;
 };
 
 #endif

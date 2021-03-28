@@ -30,18 +30,21 @@ public:
     udpServer(QHostAddress ip, quint16 port);
 
     void udpGetMsg(std::string &strMsg);
+    void Exit();
 
+    
 signals:
     void getMsgSuccess(std::string strMsg);
     void getMsgNow();
 
 private slots:
     void getMsg();
+    void run();
 
 private:
     void udpServerInit();
     void udpServerInit(QHostAddress ip, quint16 port);
-
+    bool is_runnable = true;
     QUdpSocket *udpsocket;
     QHostAddress ipaddr;
     quint16 qport;
@@ -59,7 +62,6 @@ public:
     udpClient(QHostAddress ip, quint16 port);
 
     void send(std::string &strMsg);
-
 
 private:
     void udpClientInit();

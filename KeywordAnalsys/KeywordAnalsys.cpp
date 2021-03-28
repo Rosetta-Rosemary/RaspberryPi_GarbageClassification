@@ -6,9 +6,9 @@ KeywordAnalsys::KeywordAnalsys()
     bool bSuccess = KeywordAnalsysInit();
     if(!bSuccess)
     {
-        cout << "Init Fail" << endl;
+        LogService::addLog(std::string("Error to Init KeywordAnalsys Mode"));
     }
-    cout << "Init Success" << endl;
+    LogService::addLog(std::string("Success to Init KeywordAnalsys Mode"));
 }
 
 KeywordAnalsys::~KeywordAnalsys(){}
@@ -21,7 +21,7 @@ bool KeywordAnalsys::KeywordAnalsysInit()
     ifstream in("Keyword.ini");  
     if (!in.is_open())  
     { 
-        cout << "Error opening file"; 
+        LogService::addLog(std::string("Error opening file"));
         return false; 
     }  
     while (!in.eof())  
@@ -31,25 +31,38 @@ bool KeywordAnalsys::KeywordAnalsysInit()
         QStringList Keywordlist = qstrKeyword.split(" ");
         int KeywordNumber = Keywordlist.at(1).toInt();
         QString Keyword = Keywordlist.at(0);
-        KeywordMap.insert(pair<int, QString>(KeywordNumber,Keyword));
+        KeywordMap.insert(pair<QString, int>(Keyword,KeywordNumber));
     }
     if(KeywordMap.empty())
     {
         return false;
     }
-    map<int,QString>::iterator it = KeywordMap.begin();
-    cout << "we get keyword from ini " << endl;
+    std::map<QString,int>::iterator it = KeywordMap.begin();
+    LogService::addLog(std::string("get keyword from ini file success"));
     while(it != KeywordMap.end())
     {
-        cout << it->first << " " << it->second.toStdString() << endl;
         it++;
     }
-    cout << "-------------------" << endl;
     return true;
 }
 
 void KeywordAnalsys::runKeywordAnalsys(std::string strMsg)
 {
+    std::cout << "runKeywordAnalsys" << std::endl;
+    LogService::addLog(std::string("[runKeywordAnalsys] ") + strMsg);
     QString qstrMsg = QString::fromStdString(strMsg);
     QStringList Msglist = qstrMsg.split(" ");
+    QString Keyword = Msglist.at(2);
+    std::map<QString,int>::iterator iter = KeywordMap.find(Keyword);
+    if(iter == KeywordMap.end())
+    {
+        LogService::addLog(std::string("Lost Func at runKeywordAnalsys"));
+    }
+    else
+    {
+        ServerTask *task = new ServerTask;
+        task->strIp = Msglist.at(0).toStdString();
+        task->iPort = Msglist.at(1).toInt();
+        task->iTaskType = iter->second;
+    }
 }

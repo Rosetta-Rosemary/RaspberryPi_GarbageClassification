@@ -29,7 +29,7 @@ void LogService::ExitLogService()
 bool LogService::writeLog(const QString &aqstrlog)
 {
     using namespace std;
-    cout << "Write Log" << endl;
+    // cout << "Write Log" << endl;
     QDateTime CurrentTime = QDateTime::currentDateTime();
     QString strDatatime = "[" + m_CurrentTime.toString("yyyy-MM-dd") + "]";
     QString strCurrentTime = "[" + CurrentTime.toString("hh-mm-ss.zzz") + "]";
@@ -44,15 +44,15 @@ bool LogService::writeLog(const QString &aqstrlog)
     }
 }
 
-void LogService::setStringLog(const string &str)
+void LogService::setLog(const string &str)
 {
     QString qstr = QString::fromStdString(str);
-    this->setQStringLog(qstr);
+    this->setLog(qstr);
 }
 
-void LogService::setQStringLog(const QString &qstr)
+void LogService::setLog(const QString &qstr)
 {
-    addLogQStringTask(qstr);
+    addLog(qstr);
 }
 
 void LogService::TimerRun()
@@ -65,11 +65,11 @@ void LogService::TimerRun()
 
 void LogService::TimerOut()
 {
-    QDateTime NowTime = GetLocalTime();
-    NowTime = QDateTime::fromString(NowTime.toString("yyyy-MM-dd"));
+    QDateTime NowLocalTime = GetLocalTime();
+    QDateTime NowTime = QDateTime::fromString(NowLocalTime.toString("yyyy-MM-dd"));
     QDateTime Systemlogtime = QDateTime::fromString(m_CurrentTime.toString("yyyy-MM-dd"));
     int days = Systemlogtime.daysTo(NowTime);
-    m_CurrentTime = NowTime;
+    m_CurrentTime = NowLocalTime;
     if(days >= 1)
     {
         string strlog;
@@ -81,7 +81,7 @@ void LogService::TimerOut()
         {
             strlog = "ChangeLogFile Fail!";
         }
-        setStringLog(strlog);
+        setLog(strlog);
     }
 }
 

@@ -12,5 +12,8 @@
 #include <tcpSocket.h>
 #include <KeywordAnalsys.h>
 #include <LogService.h>
+#include <UdpNetwork.h>
 
+struct TargetAddress;
+struct ServerAddress;
 #endif
