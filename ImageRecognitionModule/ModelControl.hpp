@@ -2,7 +2,7 @@
 #define _MODELCONTROL_HPP_
 
 #include <PythonInterface.hpp>
-#include <udpSocket.h>
+#include <UdpNetwork.h>
 #include <mutex>
 #include <thread>
 

@@ -35,13 +35,21 @@ bool LogService::writeLog(const QString &aqstrlog)
     QString strCurrentTime = "[" + CurrentTime.toString("hh-mm-ss.zzz") + "]";
     QString LogString = strDatatime + strCurrentTime + " " + aqstrlog + "\n";
     unique_lock<mutex> writelock(m_mtxLogWrite);
-    if(this->FileOpen());
+    if(this->FileOpen())
     {
         QTextStream out(m_Logfile);
         out << LogString;
         m_Logfile->flush();
         this->FileClose();
+        qDebug() << LogString;
+        return true;
     }
+    else
+    {
+        return false;
+    }
+    return true;
+    
 }
 
 void LogService::setLog(const string &str)

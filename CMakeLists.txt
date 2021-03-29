@@ -29,7 +29,7 @@ find_package(PythonLibs REQUIRED)
  add_subdirectory("./KeywordAnalsys")
  add_subdirectory("./GetIpAndMac")
  add_subdirectory("./tcpSocket")
- add_subdirectory("./udpSocket")
+# add_subdirectory("./udpSocket")
  add_subdirectory("./UdpNetwork")
  
  add_subdirectory("./PiServer")

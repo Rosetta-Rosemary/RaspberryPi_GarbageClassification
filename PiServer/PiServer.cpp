@@ -48,9 +48,7 @@ int main(int argc, char *argv[])
     PiUdpServer_CLIENT.wait();
 */
 
-    UdpNetwork Core;
-    UdpNetwork Client(strip,26602);
-    UdpNetwork Terminal(strip,26603);
+    udpServer Core("127.0.0.1", 26601);
 
     XmlReader *reader = XmlReader::get_instance();
     LogService::addLog(QString("THIS IS PISERVER"));

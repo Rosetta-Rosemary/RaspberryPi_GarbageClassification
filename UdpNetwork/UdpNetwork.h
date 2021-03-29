@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <sstream>
 #include <LogService.h>
-#include <udpSocket.h>
+// #include <udpSocket.h>
 #include <KeywordAnalsys.h>
 
 using namespace std;
@@ -83,24 +83,69 @@ public:
     UdpNetwork(string strIp, int iport);
 
 
+    static QHostAddress StdString2QHostAddress(string &ip);
+    static quint16 int2quint16(int &iport);
+
+
+signals:
+
+private slots:
+
+private:
+
+protected:
+
+};
+
+
+class udpServer : public QObject
+{
+    Q_OBJECT
+public:
+    udpServer();
+    ~udpServer();
+    udpServer(string strIp, int iport);
+    udpServer(QHostAddress ip, quint16 port);
+
 signals:
     void getMsgSuccess(std::string str);
 private slots:
     void getMsg();
 
 private:
-    bool Init(string strIp, int iport);
+    bool Init();
     void setSocketIpAndPort(string strIp, int iport);
-    QHostAddress StdString2QHostAddress(string &ip);
-    quint16 int2quint16(int &iport);
+    void setSocketIpAndPort(QHostAddress ip, quint16 port);
 
 protected:
     QUdpSocket *udpsocket;
     QHostAddress m_ipaddr;
     quint16 m_qport;
     ServerAddress *server;
-
     std::string strGetMsg = "";
+};
+
+class udpClient : public QObject
+{
+   Q_OBJECT
+
+public:
+    static void SendMsg(std::string msg, std::string ip, int port)
+    {
+        udpClient *client = new udpClient;
+        QHostAddress qAdrIp = UdpNetwork::StdString2QHostAddress(ip);
+        quint16 qPort = UdpNetwork::int2quint16(port);
+        std::string strmsg = ip + " " + std::to_string(port) + " " + msg;
+        client->send(strmsg,qAdrIp,qPort);
+    };
+
+    udpClient();
+    ~udpClient();
+
+    void send(std::string &msg ,QHostAddress ip, quint16 port);
+
+private:
+    void sendUdpMsg(std::string &msg ,QHostAddress ip, quint16 port);
 };
 
 #endif
