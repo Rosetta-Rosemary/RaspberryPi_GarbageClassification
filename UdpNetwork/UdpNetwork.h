@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <map>
+#include <memory>
+#include <vector>
 #include <QUdpSocket>
 #include <QObject>
 #include <QWidget>
@@ -14,23 +16,21 @@
 
 using namespace std;
 
-struct TargetAddress
+struct ServerAddress
+{
+    string strip;
+    int iport;
+    shared_ptr<QObject> UdpNetwork;
+};
+
+struct ServerWork
 {
     string ip;
     int port;
     int iNetworkType;
-    QObject *socket;
+    shared_ptr<QObject> UdpNetwork;
 };
 
-struct ServerAddress
-{
-    string ip;
-    int port;
-    QWidget *UdpNetwork;
-};
-
-
-static std::map<int, TargetAddress*> mapNetworkIp;
 static std::map<int, ServerAddress*> mapNetworkServer;
 
 const static int NETWORK_TYPE_SERVER    = 0;
@@ -78,22 +78,37 @@ class UdpNetwork : public QWidget
 {
     Q_OBJECT
 public:
-    UdpNetwork();
+    static UdpNetwork * get_instance()
+    {
+        if(instance == NULL)
+        {
+            instance = new UdpNetwork;
+        }
+        else {}
+        return instance;
+    };
     ~UdpNetwork();
-    UdpNetwork(string strIp, int iport);
-
-
+    
     static QHostAddress StdString2QHostAddress(string &ip);
     static quint16 int2quint16(int &iport);
 
+    void AddServer(std::string ip,int port);
 
 signals:
 
+
 private slots:
+    void EXIT();
+    void ADD_CLIENT(){};
+    void ADD_SERVER(){};
+    void DELETE_CLIENT(){};
 
 private:
+    UdpNetwork();
 
 protected:
+    static UdpNetwork *instance;
+    std::vector<std::shared_ptr<ServerAddress>> vecServerNetwork;
 
 };
 

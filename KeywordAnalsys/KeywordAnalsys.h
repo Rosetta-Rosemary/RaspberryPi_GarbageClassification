@@ -32,6 +32,9 @@ public:
     };
     bool KeywordAnalsysInit();
 
+signals:
+    void EXIT();
+
 public slots:
     void runKeywordAnalsys(std::string strMsg);
 

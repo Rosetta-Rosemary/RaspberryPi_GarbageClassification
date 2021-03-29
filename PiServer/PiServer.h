@@ -14,6 +14,6 @@
 #include <LogService.h>
 #include <UdpNetwork.h>
 
-struct TargetAddress;
+struct ServerWork;
 struct ServerAddress;
 #endif

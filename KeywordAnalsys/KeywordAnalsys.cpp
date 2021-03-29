@@ -43,6 +43,7 @@ bool KeywordAnalsys::KeywordAnalsysInit()
     {
         it++;
     }
+
     return true;
 }
 
@@ -64,5 +65,9 @@ void KeywordAnalsys::runKeywordAnalsys(std::string strMsg)
         task->strIp = Msglist.at(0).toStdString();
         task->iPort = Msglist.at(1).toInt();
         task->iTaskType = iter->second;
+        if(task->iTaskType == 0)
+        {
+            emit(EXIT());
+        }
     }
 }

@@ -4,7 +4,6 @@ set(libKeywordAnalsys ./KeywordAnalsys.cpp)
 
 include_directories("./")
 
-
 find_package(Qt5Core CONFIG REQUIRED)
 include_directories("${PROJECT_SOURCE_DIR}/LogService")
 add_library(KeywordAnalsys_shared SHARED ${libKeywordAnalsys})

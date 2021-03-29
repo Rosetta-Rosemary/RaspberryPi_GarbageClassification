@@ -11,6 +11,7 @@ udpServer::udpServer()
 udpServer::~udpServer()
 {
     udpsocket->deleteLater();
+    LogService::addLog(std::string("delete udpsocket"));
 }
 
 udpServer::udpServer(string strIp, int iport)
