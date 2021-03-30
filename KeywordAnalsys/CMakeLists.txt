@@ -1,6 +1,6 @@
 AUX_SOURCE_DIRECTORY(. DIR_SRCS)
 
-set(libKeywordAnalsys ./KeywordAnalsys.cpp)
+set(libKeywordAnalsys ./KeywordAnalsys.cpp ./KeywordAnalsysTaskMgr.cpp)
 
 include_directories("./")
 

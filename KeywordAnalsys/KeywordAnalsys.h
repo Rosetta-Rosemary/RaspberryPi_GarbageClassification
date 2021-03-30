@@ -45,4 +45,37 @@ private:
     std::map<QString, int> KeywordMap;
 };
 
+class KeywordAnalsysTaskMgr : public QThread
+{
+    Q_OBJECT
+public:
+    static KeywordAnalsysTaskMgr * get_instance()
+    {
+        if (instance == NULL)
+        {
+            instance = new KeywordAnalsysTaskMgr;
+        }
+        return instance;
+    }
+
+    ~KeywordAnalsysTaskMgr();
+    void STOP();
+    void EXIT();
+
+
+signals:
+
+private slots:
+
+private:
+    KeywordAnalsysTaskMgr();
+    void Init();
+    void run();
+
+protected:
+    static KeywordAnalsysTaskMgr * instance;
+    bool is_runnable = true;
+
+};
+
 #endif
