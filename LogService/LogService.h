@@ -65,7 +65,7 @@ public:
                 continue;
             }
         }
-        printf("Mgr Exit Now in LogServer\n");;
+        printf("Mgr Exit Now in LogServer\n");
     };
     void setLog(const string &str);
     void setLog(const QString &qstr);

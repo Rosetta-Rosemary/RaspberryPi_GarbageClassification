@@ -1,5 +1,9 @@
 #include <KeywordAnalsys.h>
 
+std::list<ServerTask*> KeywordAnalsys::m_queTask;
+Signal *Signal::instance;
+
+
 KeywordAnalsys::KeywordAnalsys()
 {
     using namespace std;
@@ -65,9 +69,56 @@ void KeywordAnalsys::runKeywordAnalsys(std::string strMsg)
         task->strIp = Msglist.at(0).toStdString();
         task->iPort = Msglist.at(1).toInt();
         task->iTaskType = iter->second;
-        if(task->iTaskType == 0)
+        AddTask(task);
+    }
+}
+
+void KeywordAnalsys::AddTask(ServerTask * task)
+{
+    m_queTask.push_back(task);
+}
+
+void KeywordAnalsys::KeywordAnalsysMgr()
+{
+    KeywordAnalsys * point = KeywordAnalsys::get_instacne();
+    using namespace std;
+    cout << "This is LogTaskMgr" << endl;
+    while(point->IsExit())
+    {
+        if(!KeywordAnalsys::m_queTask.empty())
         {
-            emit(EXIT());
+            list<ServerTask*>::iterator iter = KeywordAnalsys::m_queTask.begin();
+            for(iter = KeywordAnalsys::m_queTask.begin(); 
+                iter != KeywordAnalsys::m_queTask.end(); )
+            {
+                point->ProcessData(*iter);
+                list<ServerTask*>::iterator it = iter;
+                iter++;
+                delete *it;
+                KeywordAnalsys::m_queTask.pop_front();
+            }
         }
+        else
+        {
+            continue;
+        }
+    }
+    printf("Mgr Exit Now in KeywordAnalsys\n");
+}
+
+void KeywordAnalsys::ProcessData(ServerTask* &task)
+{
+    Signal *signal = Signal::get_instance();
+    switch (task->iTaskType)
+    {
+    case 0:
+        emit(signal->ExitSingal());
+        break;
+    case 1:
+        emit(signal->AddClient(task->strIp, task->iPort));
+        break;
+    
+    default:
+        break;
     }
 }

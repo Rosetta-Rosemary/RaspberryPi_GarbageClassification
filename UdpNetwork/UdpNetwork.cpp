@@ -6,14 +6,30 @@ UdpNetwork *UdpNetwork::instance;
 
 UdpNetwork::UdpNetwork()
 {
-    connect(KeywordAnalsys::get_instacne(),SIGNAL(EXIT()),
-        this,SLOT(EXIT()));
+    Init();
+    {
+        std::string strBoardcastiP = UdpNetwork::getBoardcastAddress();
+        udpClient::SendMsg(std::string("SERVER"),strBoardcastiP,26601);
+    }
 }
 
 UdpNetwork::~UdpNetwork()
 {
 
 }
+
+void UdpNetwork::Init()
+{
+    connect(Signal::get_instance(),SIGNAL(ExitSingal()),
+        this,SLOT(EXIT()));
+    connect(Signal::get_instance(),SIGNAL(AddClient(std::string, int)),
+        this,SLOT(ADD_CLIENT(std::string, int)));  
+
+
+
+}
+
+
 
 void UdpNetwork::AddServer(std::string ip,int port)
 {
@@ -41,9 +57,20 @@ void UdpNetwork::EXIT()
     this->close();
 }
 
-
-
-
+void UdpNetwork::ADD_CLIENT(std::string ip, int port)
+{
+    {
+        std::string str = "Add Client Address : " + ip + ":" + std::to_string(port);
+        LogService::addLog(str);
+    }
+    ClientAddress addClient;
+    addClient.ip = ip;
+    addClient.port = port;
+    vectClient.push_back(addClient);
+    {
+        udpClient::SendMsg(std::string("SERVER"),ip,port);
+    }
+}
 
 QHostAddress UdpNetwork::StdString2QHostAddress(string &ip)
 {
@@ -57,3 +84,15 @@ quint16 UdpNetwork::int2quint16(int &iport)
     return tempstr.toUInt();
 }
 
+std::string UdpNetwork::getBoardcastAddress()
+{
+        std::string LoaclIp;
+        GetLocalIP(LoaclIp);
+        QString qLoaclIp = QString::fromStdString(LoaclIp);
+        QStringList qLoaclIpLists = qLoaclIp.split(".");
+        QString qBoardcastAddress = qLoaclIpLists.at(0) + "."
+                                    + qLoaclIpLists.at(1) + "."
+                                    + qLoaclIpLists.at(2) + ".255";
+        LogService::addLog(QString("getBoardcastAddress : ") + qBoardcastAddress);
+        return qBoardcastAddress.toStdString();
+}

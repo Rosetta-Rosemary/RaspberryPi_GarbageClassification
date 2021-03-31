@@ -5,7 +5,7 @@
 #include <winsock2.h>
 #include <iostream>
 #include <stdio.h>
-bool GetLocalIP(std::string &ip)
+static bool GetLocalIP(std::string &ip)
 {
 	char *cIp;
 	WSADATA wsaData;
@@ -100,7 +100,7 @@ int get_ipv6_linux(std::list<std::string>& out_list_ip6)
     return get_ip_linux(AF_INET6, out_list_ip6); 
 }
 
-bool GetLocalIP(std::string &Ip)
+static bool GetLocalIP(std::string &Ip)
 {
 	using namespace std;
 	std::list<std::string> ipv4;

@@ -15,6 +15,8 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
     LogMgrThread *log = LogMgrThread::get_instance();
     log->start();
+    KeywordAnalsysTaskMgr *KeywordMgr = KeywordAnalsysTaskMgr::get_instance();
+    KeywordMgr->start();
 
     string strip;
     GetLocalIP(strip);

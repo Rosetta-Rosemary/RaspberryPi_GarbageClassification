@@ -8,8 +8,9 @@
 #include <vector>
 #include <cstring>
 #include <map>
-
+#include <Signal.hpp>
 #include <LogService.h>
+
 
 struct ServerTask
 {
@@ -32,6 +33,8 @@ public:
     };
     bool KeywordAnalsysInit();
 
+    static void KeywordAnalsysMgr();
+
 signals:
     void EXIT();
 
@@ -40,9 +43,17 @@ public slots:
 
 private:
     KeywordAnalsys();
-    KeywordAnalsys(const KeywordAnalsys &);
+    KeywordAnalsys(const KeywordAnalsys &){};
+    void AddTask(ServerTask * task);
+
+    bool IsExit(){ return m_bRun;};
+
+    void ProcessData(ServerTask* &task);
+
+    static std::list<ServerTask*> m_queTask;
 
     std::map<QString, int> KeywordMap;
+    bool m_bRun = true;
 };
 
 class KeywordAnalsysTaskMgr : public QThread
@@ -55,13 +66,13 @@ public:
         {
             instance = new KeywordAnalsysTaskMgr;
         }
+      
         return instance;
-    }
+    };
 
     ~KeywordAnalsysTaskMgr();
     void STOP();
     void EXIT();
-
 
 signals:
 
