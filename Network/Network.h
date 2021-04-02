@@ -1,5 +1,5 @@
-#ifndef _UDPNETWORK_H_
-#define _UDPNETWORK_H_
+#ifndef _NETWORK_H_
+#define _NETWORK_H_
 
 #include <iostream>
 #include <map>
@@ -12,6 +12,13 @@
 #include <sstream>
 #include <LogService.h>
 // #include <udpSocket.h>
+#include <QTcpServer>//服务器
+#include <QTcpSocket>//套接字
+#include <QFile>
+#include <QDataStream>
+#include <QDir>
+#include <QFileInfo>//文件属性
+
 #include <KeywordAnalsys.h>
 #include <GetIpAndMac.hpp>
 
@@ -21,7 +28,7 @@ struct ServerAddress
 {
     string strip;
     int iport;
-    shared_ptr<QObject> UdpNetwork;
+    shared_ptr<QObject> Network;
 };
 
 struct ServerWork
@@ -29,7 +36,7 @@ struct ServerWork
     string ip;
     int port;
     int iNetworkType;
-    shared_ptr<QObject> UdpNetwork;
+    shared_ptr<QObject> Network;
 };
 
 struct ClientAddress
@@ -44,29 +51,29 @@ const static int NETWORK_TYPE_SERVER    = 0;
 const static int NETWORK_TYPE_CLIENT    = 1;
 const static int NETWORK_TYPE_TERMINAL  = 2;
 
-class UdpNetwork : public QWidget
+class Network : public QWidget
 {
     Q_OBJECT
 public:
-    static UdpNetwork * get_instance()
+    static Network * get_instance()
     {
         if(instance == NULL)
         {
-            instance = new UdpNetwork;
+            instance = new Network;
         }
         else {}
         return instance;
     };
-    ~UdpNetwork();
+    ~Network(); 
     
+    void AddServer(std::string ip,int port);
+    void TcpRecvServer(int port);
+
     static QHostAddress StdString2QHostAddress(string &ip);
     static quint16 int2quint16(int &iport);
     static std::string getBoardcastAddress();
 
-    void AddServer(std::string ip,int port);
-
 signals:
-
 
 private slots:
     void EXIT();
@@ -74,18 +81,15 @@ private slots:
     void ADD_SERVER(){};
     void DELETE_CLIENT(std::string ip, int port){};
 
-
 private:
-    UdpNetwork();
+    Network();
     void Init();
 
 protected:
-    static UdpNetwork *instance;
+    static Network *instance;
     std::vector<std::shared_ptr<ServerAddress>> vecServerNetwork;
     std::vector<ClientAddress> vectClient;
-
 };
-
 
 class udpServer : public QObject
 {
@@ -119,15 +123,7 @@ class udpClient : public QObject
    Q_OBJECT
 
 public:
-    static void SendMsg(std::string msg, std::string ip, int port)
-    {
-        udpClient *client = new udpClient;
-        QHostAddress qAdrIp = UdpNetwork::StdString2QHostAddress(ip);
-        quint16 qPort = UdpNetwork::int2quint16(port);
-        std::string strmsg = ip + " " + std::to_string(port) + " " + msg;
-        client->send(strmsg,qAdrIp,qPort);
-    };
-
+    static void SendMsg(std::string msg, std::string ip, int port);
     udpClient();
     ~udpClient();
 
@@ -135,6 +131,48 @@ public:
 
 private:
     void sendUdpMsg(std::string &msg ,QHostAddress ip, quint16 port);
+};
+
+class tcpServer : public QObject
+{
+    Q_OBJECT
+
+public:
+    tcpServer();
+    ~tcpServer();
+    tcpServer(int iport);
+    tcpServer(quint16 port);
+    void ReadyToClient();
+
+private:
+    bool Init();
+    void SendInit();
+
+    void setSocketPort(int iport);
+    void setSocketPort(quint16 port);
+
+signals:
+    void ReadyToSend();
+    void getMsgSuccess(std::string str);
+    void getFileSuccess();
+
+private slots:
+    void newListen();
+    void SendFileClient();
+    void RecvFileData();
+    void SendFileHead();
+    void SendFileText();
+
+protected:
+    QTcpServer m_tcpServer;
+    QTcpSocket m_tcpSocket;//创建套接字对象
+    QHostAddress m_ipaddr;
+    quint16 m_qport;
+    QFile file;//文件对象
+    QString filename;//文件名
+    quint64 filesize;//文件大小
+    quint64 sendsize;//发送文件的大小
+    quint64 recvsize;//接受大小
 };
 
 #endif

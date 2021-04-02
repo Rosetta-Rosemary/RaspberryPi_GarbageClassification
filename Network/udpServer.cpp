@@ -1,4 +1,4 @@
-#include <UdpNetwork.h>
+#include <Network.h>
 
 using namespace std;
 
@@ -65,8 +65,8 @@ void udpServer::getMsg()
 
 void udpServer::setSocketIpAndPort(string strIp, int iport)
 {
-    m_ipaddr = UdpNetwork::StdString2QHostAddress(strIp);
-    m_qport = UdpNetwork::int2quint16(iport);
+    m_ipaddr = Network::StdString2QHostAddress(strIp);
+    m_qport = Network::int2quint16(iport);
 }
 
 void udpServer::setSocketIpAndPort(QHostAddress ip, quint16 port)

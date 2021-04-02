@@ -1,24 +1,24 @@
-#include <UdpNetwork.h>
+#include <Network.h>
 
 using namespace std;
 
-UdpNetwork *UdpNetwork::instance;
+Network *Network::instance;
 
-UdpNetwork::UdpNetwork()
+Network::Network()
 {
     Init();
     {
-        std::string strBoardcastiP = UdpNetwork::getBoardcastAddress();
+        std::string strBoardcastiP = Network::getBoardcastAddress();
         udpClient::SendMsg(std::string("SERVER"),strBoardcastiP,26601);
     }
 }
 
-UdpNetwork::~UdpNetwork()
+Network::~Network()
 {
 
 }
 
-void UdpNetwork::Init()
+void Network::Init()
 {
     connect(Signal::get_instance(),SIGNAL(ExitSingal()),
         this,SLOT(EXIT()));
@@ -29,27 +29,34 @@ void UdpNetwork::Init()
 
 }
 
-
-
-void UdpNetwork::AddServer(std::string ip,int port)
+void Network::AddServer(std::string ip,int port)
 {
     std::unique_ptr<QObject> p_udpserver(new udpServer(ip,port));
     std::shared_ptr<ServerAddress> Server(new ServerAddress);
     Server->strip = ip;
     Server->iport = port;
-    Server->UdpNetwork = std::move(p_udpserver);
+    Server->Network = std::move(p_udpserver);
     vecServerNetwork.push_back(Server);
-    std::cout << "25" << std::endl;
 }
 
-void UdpNetwork::EXIT()
+void Network::TcpRecvServer(int port)
+{
+    std::unique_ptr<QObject> p_tcpserver(new tcpServer(port));
+    std::shared_ptr<ServerAddress> Server(new ServerAddress);
+    Server->strip = "0.0.0.0";
+    Server->iport = port;
+    Server->Network = std::move(p_tcpserver);
+    vecServerNetwork.push_back(Server);
+}
+
+void Network::EXIT()
 {
     if(!vecServerNetwork.empty())
     {
         for(auto iter = vecServerNetwork.begin();
             iter != vecServerNetwork.end(); iter++)
         {
-            (*iter)->UdpNetwork->deleteLater();
+            (*iter)->Network->deleteLater();
             auto it = vecServerNetwork.erase(iter);
             it->reset();
         }
@@ -57,7 +64,7 @@ void UdpNetwork::EXIT()
     this->close();
 }
 
-void UdpNetwork::ADD_CLIENT(std::string ip, int port)
+void Network::ADD_CLIENT(std::string ip, int port)
 {
     {
         std::string str = "Add Client Address : " + ip + ":" + std::to_string(port);
@@ -72,19 +79,19 @@ void UdpNetwork::ADD_CLIENT(std::string ip, int port)
     }
 }
 
-QHostAddress UdpNetwork::StdString2QHostAddress(string &ip)
+QHostAddress Network::StdString2QHostAddress(string &ip)
 {
     QString tempstr = QString::fromStdString(ip);
     return QHostAddress(tempstr);
 }
 
-quint16 UdpNetwork::int2quint16(int &iport)
+quint16 Network::int2quint16(int &iport)
 {
     QString tempstr = QString::number(iport);
     return tempstr.toUInt();
 }
 
-std::string UdpNetwork::getBoardcastAddress()
+std::string Network::getBoardcastAddress()
 {
         std::string LoaclIp;
         GetLocalIP(LoaclIp);

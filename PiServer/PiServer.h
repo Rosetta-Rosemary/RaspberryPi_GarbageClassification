@@ -3,16 +3,11 @@
 
 #include <iostream>
 #include <QApplication>
-
+#include <windows.h>
 
 #include <XmlReader.h>
-#include <GetIpAndMac.hpp>
 #include <Classify.h>
-// #include <udpSocket.h>
-#include <tcpSocket.h>
-#include <KeywordAnalsys.h>
-#include <LogService.h>
-#include <UdpNetwork.h>
+#include <Network.h>
 
 struct ServerWork;
 struct ServerAddress;
