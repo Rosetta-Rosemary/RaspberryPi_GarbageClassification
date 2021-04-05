@@ -3,7 +3,6 @@
 std::list<ServerTask*> KeywordAnalsys::m_queTask;
 Signal *Signal::instance;
 
-
 KeywordAnalsys::KeywordAnalsys()
 {
     using namespace std;
@@ -69,6 +68,10 @@ void KeywordAnalsys::runKeywordAnalsys(std::string strMsg)
         task->strIp = Msglist.at(0).toStdString();
         task->iPort = Msglist.at(1).toInt();
         task->iTaskType = iter->second;
+        if(Msglist.size() >= 4)
+        {
+            task->stdRecord = Msglist.at(3).toStdString();
+        }
         AddTask(task);
     }
 }
@@ -117,6 +120,21 @@ void KeywordAnalsys::ProcessData(ServerTask* &task)
     case 1:
         emit(signal->AddClient(task->strIp, task->iPort));
         break;
+    case 2:
+        emit(signal->DeleteClient(task->strIp, task->iPort));
+        break;
+    case 3:
+        emit(signal->AddServer(task->strIp, task->iPort));
+        break;
+    case 4:
+        emit(signal->DeleteServer(task->strIp, task->iPort));
+        break;            
+    case 5:
+        emit(signal->ClassifyTask(task->strIp, task->iPort, task->stdRecord));
+        break;   
+    case 6:
+        emit(signal->ResultReturn(task->strIp, task->iPort, task->stdRecord));
+        break;  
     
     default:
         break;

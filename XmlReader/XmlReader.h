@@ -54,6 +54,8 @@ public:
 
     map<int, SortBill> getVecClassInfo();
    
+
+
 private:
     XmlReader();
     bool XmlLoad();

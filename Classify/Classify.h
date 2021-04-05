@@ -9,10 +9,16 @@
 #include <cstring>
 #include <map>
 
+#include <KeywordAnalsys.h>
+#include <XmlReader.h>
+
 using namespace std;
 
-class Classify
+struct SortBill;
+
+class Classify : public QObject
 {
+    Q_OBJECT
 public:
     ~Classify();
     static Classify *get_instacne()
@@ -21,6 +27,12 @@ public:
         return &i_classify;
     };
     string getClassifyResult(int &acc);
+
+signals:
+    void GET_RESULT(std::string str);
+
+private slots:   
+    void CLASSIFY_TASK(std::string ip, int port, std::string strType);
 
 private:
     Classify();
@@ -32,8 +44,7 @@ private:
     bool bInit = false;
 
     string strClassifyResult;
-    map<int,string> ClassifyResult;
-
+    map<int, SortBill>ClassTable;
 };
 
 #endif

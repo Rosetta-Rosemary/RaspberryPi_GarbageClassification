@@ -19,10 +19,14 @@ public:
 
 signals:
     void ExitSingal();
+
     void AddClient(std::string ip, int port);
+    void DeleteClient(std::string ip, int port);
+    void AddServer(std::string ip, int port);
+    void DeleteServer(std::string ip, int port);
 
-
-
+    void ClassifyTask(std::string ip, int port, std::string GRE);
+    void ResultReturn(std::string ip, int port, std::string GRE);
 
 
 

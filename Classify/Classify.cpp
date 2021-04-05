@@ -14,6 +14,10 @@ Classify::Classify()
     else
     {
         printf("[Debug]Model Classify Init Success\n");
+        connect(Signal::get_instance(),SIGNAL(ClassifyTask(std::string, int, std::string)),
+            this,SLOT(CLASSIFY_TASK(std::string, int, std::string)));
+        connect(this,SIGNAL(GET_RESULT(std::string)),
+            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(std::string)));
     }
 }
 
@@ -26,12 +30,12 @@ string Classify::getClassifyResult(int &acc)
 
 string Classify::runClassify(int &acc)
 {
-    map<int,string>::iterator iter;
-    iter = ClassifyResult.find(acc);
-    if (iter != ClassifyResult.end())
+    map<int,SortBill>::iterator iter;
+    iter = ClassTable.find(acc);
+    if (iter != ClassTable.end())
     {
-        cout << "Find it, the relative value is: " << iter->second << endl;
-        return iter->second;
+        cout << "Find it, the relative value is: " << (iter->second).strName.toStdString() << endl;
+        return (iter->second).strName.toStdString();
     }
     else
     {
@@ -44,7 +48,10 @@ string Classify::runClassify(int &acc)
 bool Classify::initClassify()
 {
     using namespace std;
-    ClassifyResult.clear(); //清空map防止初始化多次导致的数据错误
+
+    ClassTable.clear(); //清空map防止初始化多次导致的数据错误
+
+    /*
     char buffer[256];  
     ifstream in("Classify.ini");  
     if (!in.is_open()) 
@@ -62,6 +69,7 @@ bool Classify::initClassify()
         string ClassifyMember = Keyword.toStdString();
         ClassifyResult.insert(pair<int, string>(KeywordNumber,ClassifyMember));
     }
+    */
     /*
         ClassifyResult.insert(pair<int, string>(0, "一次性餐盒"));
         ClassifyResult.insert(pair<int, string>(1, "充电宝"));   
@@ -104,17 +112,24 @@ bool Classify::initClassify()
         ClassifyResult.insert(pair<int, string>(38, "饮料瓶")); 
         ClassifyResult.insert(pair<int, string>(39, "鱼骨")); 
     */
-    if(ClassifyResult.empty())
+    XmlReader *reader = XmlReader::get_instance();
+
+    ClassTable = reader->getVecClassInfo();
+    map<int, SortBill>::iterator iter = ClassTable.begin();
+    
+    
+    if(ClassTable.empty())
     {
         return false;
     }
 
-    cout << "-----------------------------" << endl;
-    map<int,string>::iterator iter;
-    for (iter = ClassifyResult.begin(); iter != ClassifyResult.end(); iter++)
-    {
-        cout << iter->first << " : " << iter->second << endl;
-    }
-    cout << "-----------------------------" << endl;
     return true;
+}
+
+void Classify::CLASSIFY_TASK(std::string ip, int port, std::string strType)
+{
+    int iAcc = atoi(strType.c_str());
+    string strResult = runClassify(iAcc);
+    string str = ip + " " + std::to_string((int)port) + " Result " + strResult;
+    emit(GET_RESULT(str));
 }

@@ -24,15 +24,20 @@ void Network::Init()
         this,SLOT(EXIT()));
     connect(Signal::get_instance(),SIGNAL(AddClient(std::string, int)),
         this,SLOT(ADD_CLIENT(std::string, int)));  
-
-
-
+    connect(Signal::get_instance(),SIGNAL(DeleteClient(std::string, int)),
+        this,SLOT(DELETE_CLIENT(std::string, int)));
+    connect(Signal::get_instance(),SIGNAL(AddServer(std::string, int)),
+        this,SLOT(ADD_SERVER(std::string, int)));  
+    connect(Signal::get_instance(),SIGNAL(DeleteServer(std::string, int)),
+        this,SLOT(DELETE_SERVER(std::string, int)));  
+    connect(Signal::get_instance(),SIGNAL(ResultReturn(std::string, int, std::string)),
+        this,SLOT(RETURN_RESULT(std::string, int, std::string)));
 }
 
 void Network::AddServer(std::string ip,int port)
 {
     std::unique_ptr<QObject> p_udpserver(new udpServer(ip,port));
-    std::shared_ptr<ServerAddress> Server(new ServerAddress);
+    std::shared_ptr<ServerWork> Server(new ServerWork);
     Server->strip = ip;
     Server->iport = port;
     Server->Network = std::move(p_udpserver);
@@ -42,7 +47,7 @@ void Network::AddServer(std::string ip,int port)
 void Network::TcpRecvServer(int port)
 {
     std::unique_ptr<QObject> p_tcpserver(new tcpServer(port));
-    std::shared_ptr<ServerAddress> Server(new ServerAddress);
+    std::shared_ptr<ServerWork> Server(new ServerWork);
     Server->strip = "0.0.0.0";
     Server->iport = port;
     Server->Network = std::move(p_tcpserver);
@@ -77,6 +82,66 @@ void Network::ADD_CLIENT(std::string ip, int port)
     {
         udpClient::SendMsg(std::string("SERVER"),ip,port);
     }
+}
+
+void Network::DELETE_CLIENT(std::string ip, int port)
+{
+    ClientAddress deleteClient;
+    deleteClient.ip = ip;
+    deleteClient.port = port;
+    for(auto iter = vectClient.begin();
+        iter != vectClient.end(); iter++)
+    {
+        if (deleteClient.ip == iter->ip && deleteClient.port == iter->port)
+        {
+            iter = vectClient.erase(iter);
+        }
+    }
+    {
+        std::string str = "Delete Client Address : " + ip + ":" + std::to_string(port);
+        LogService::addLog(str);
+    }
+}
+
+void Network::ADD_SERVER(std::string ip, int port)
+{
+    {
+        std::string str = "Add Server Address : " + ip + ":" + std::to_string(port);
+        LogService::addLog(str);
+    }
+    ServerAddress addServer;
+    addServer.strip = ip;
+    addServer.iport = port;
+    vectServer.push_back(addServer);
+    {
+        udpClient::SendMsg(std::string("CLIENT"),ip,port);
+    }
+}
+
+void Network::DELETE_SERVER(std::string ip, int port)
+{
+    ServerAddress deleteServer;
+    deleteServer.strip = ip;
+    deleteServer.iport = port;
+    for(auto iter = vectServer.begin();
+        iter != vectServer.end(); iter++)
+    {
+        if (deleteServer.strip == iter->strip && deleteServer.iport == iter->iport)
+        {
+            iter = vectServer.erase(iter);
+        }
+    }
+    {
+        std::string str = "Delete Server Address : " + ip + ":" + std::to_string(port);
+        LogService::addLog(str);
+    }
+
+}
+
+void Network::RETURN_RESULT(std::string ip, int port, std::string GRE)
+{
+    std::string msg = "Result " + GRE;
+    udpClient::SendMsg(msg, ip, port);
 }
 
 QHostAddress Network::StdString2QHostAddress(string &ip)

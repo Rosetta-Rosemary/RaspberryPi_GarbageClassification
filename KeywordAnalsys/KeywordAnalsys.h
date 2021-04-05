@@ -17,6 +17,7 @@ struct ServerTask
     std::string strIp;
     int iPort;
     int iTaskType;
+    std::string stdRecord;
 };
 
 class KeywordAnalsys : public QObject

@@ -113,7 +113,10 @@ void tcpServer::RecvFileData()
 void tcpServer::SendFileHead()
 {
     //发送文件名以及文件大小
-    QFileInfo info("./Image.jpeg");
+    std::string Localip;
+    GetLocalIP(Localip);
+    QString FileName = "./" + QString::fromStdString(Localip) + " " + "26602 " + "Image.jpeg";
+    QFileInfo info(FileName);
     filename =info.fileName();
     filesize =info.size();
 
@@ -123,7 +126,7 @@ void tcpServer::SendFileHead()
     stream << filesize << filename;
 
     //打开文件准备读写数据
-    file.setFileName("./Image.jpeg");
+    file.setFileName(FileName);
     file.open(QIODevice::ReadOnly);
 
     //发送数据

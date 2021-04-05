@@ -24,21 +24,20 @@
 
 using namespace std;
 
-struct ServerAddress
+
+
+struct ServerWork
 {
     string strip;
     int iport;
     shared_ptr<QObject> Network;
 };
 
-struct ServerWork
+struct ServerAddress
 {
-    string ip;
-    int port;
-    int iNetworkType;
-    shared_ptr<QObject> Network;
+    string strip;
+    int iport;
 };
-
 struct ClientAddress
 {
     string ip;
@@ -78,8 +77,11 @@ signals:
 private slots:
     void EXIT();
     void ADD_CLIENT(std::string ip, int port);
-    void ADD_SERVER(){};
-    void DELETE_CLIENT(std::string ip, int port){};
+    void DELETE_CLIENT(std::string ip, int port);
+    void ADD_SERVER(std::string ip, int port);
+    void DELETE_SERVER(std::string ip, int port);
+    void RETURN_RESULT(std::string ip, int port, std::string GRE);
+
 
 private:
     Network();
@@ -87,8 +89,9 @@ private:
 
 protected:
     static Network *instance;
-    std::vector<std::shared_ptr<ServerAddress>> vecServerNetwork;
+    std::vector<std::shared_ptr<ServerWork>> vecServerNetwork;
     std::vector<ClientAddress> vectClient;
+    std::vector<ServerAddress> vectServer;
 };
 
 class udpServer : public QObject
