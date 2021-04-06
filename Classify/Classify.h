@@ -3,11 +3,14 @@
 
 #include <iostream>
 #include <fstream>
+#include <Python.h>
 #include <QtCore>
 #include <QString>
+#include <QWidget>
 #include <vector>
 #include <cstring>
 #include <map>
+#include <mutex>
 
 #include <KeywordAnalsys.h>
 #include <XmlReader.h>
@@ -47,4 +50,39 @@ private:
     map<int, SortBill>ClassTable;
 };
 
+class ImageRecognitionMgr : public QThread
+{
+    Q_OBJECT
+public:
+    static ImageRecognitionMgr * get_instance()
+    {
+        if (instance == nullptr)
+        {
+            instance = new ImageRecognitionMgr;
+        }
+        return instance;
+    };
+    ~ImageRecognitionMgr();
+
+signals:
+    void GET_RESULT(std::string str);
+
+private slots:
+    void IMAGE_RECOGNITION_TASK(std::string ip, int port, std::string GRE);
+
+private:
+    ImageRecognitionMgr();
+    void run(){this->runImageRecognitionMgr();};
+    void runImageRecognitionMgr();
+
+
+protected:
+    static ImageRecognitionMgr *instance;
+    std::mutex m_runMtx;
+    std::mutex m_waitMtx;
+    std::string m_strip;
+    int m_iport;
+    std::string m_strFilename;
+    bool m_isRunAble = false;
+};
 #endif

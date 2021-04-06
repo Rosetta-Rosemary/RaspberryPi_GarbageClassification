@@ -135,6 +135,9 @@ void KeywordAnalsys::ProcessData(ServerTask* &task)
     case 6:
         emit(signal->ResultReturn(task->strIp, task->iPort, task->stdRecord));
         break;  
+    case 7:
+        emit(signal->ImageRecognitionTask(task->strIp, task->iPort, task->stdRecord));
+        break;
     
     default:
         break;

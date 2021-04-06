@@ -27,7 +27,8 @@ signals:
 
     void ClassifyTask(std::string ip, int port, std::string GRE);
     void ResultReturn(std::string ip, int port, std::string GRE);
-
+    void ImageRecognitionTask(std::string ip, int port, std::string GRE);
+    
 
 
 private:    

@@ -115,7 +115,7 @@ void tcpServer::SendFileHead()
     //发送文件名以及文件大小
     std::string Localip;
     GetLocalIP(Localip);
-    QString FileName = "./" + QString::fromStdString(Localip) + " " + "26602 " + "Image.jpeg";
+    QString FileName = "./" + QString::fromStdString(Localip) + "-" + "26602-" + "Image.jpeg";
     QFileInfo info(FileName);
     filename =info.fileName();
     filesize =info.size();

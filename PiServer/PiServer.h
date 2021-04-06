@@ -2,6 +2,7 @@
 #define _PISERVER_H_
 
 #include <iostream>
+#include <Python.h>
 #include <QApplication>
 #include <windows.h>
 
