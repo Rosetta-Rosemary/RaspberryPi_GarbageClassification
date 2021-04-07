@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 {
     using namespace std;
     QApplication a(argc,argv);
+
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
     LogMgrThread *pLogMgr = LogMgrThread::get_instance();
@@ -20,8 +21,8 @@ int main(int argc, char *argv[])
     KeywordAnalsysTaskMgr *pKeywordMgr = KeywordAnalsysTaskMgr::get_instance();
     pKeywordMgr->start();
 
-    ImageRecognitionMgr *pImageRecognitionMgr = ImageRecognitionMgr::get_instance();
-    pImageRecognitionMgr->start();
+    //ImageRecognitionMgr *pImageRecognitionMgr = ImageRecognitionMgr::get_instance();
+    //pImageRecognitionMgr->start();
 
     string strip;
     GetLocalIP(strip);
@@ -33,10 +34,11 @@ int main(int argc, char *argv[])
     
 
     XmlReader *reader = XmlReader::get_instance();
+    Classify *pClassify = Classify::get_instacne();
     LogService::addLog(QString("THIS IS PISERVER"));
 
     printf("This is main\n");
     return a.exec();
 
-    _sleep(2500);
+    staticSleep(2500);
 }

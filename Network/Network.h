@@ -24,23 +24,21 @@
 
 using namespace std;
 
-
-
 struct ServerWork
 {
-    string strip;
+    QString strip;
     int iport;
     shared_ptr<QObject> Network;
 };
 
 struct ServerAddress
 {
-    string strip;
+    QString strip;
     int iport;
 };
 struct ClientAddress
 {
-    string ip;
+    QString ip;
     int port;
 };
 
@@ -76,11 +74,11 @@ signals:
 
 private slots:
     void EXIT();
-    void ADD_CLIENT(std::string ip, int port);
-    void DELETE_CLIENT(std::string ip, int port);
-    void ADD_SERVER(std::string ip, int port);
-    void DELETE_SERVER(std::string ip, int port);
-    void RETURN_RESULT(std::string ip, int port, std::string GRE);
+    void ADD_CLIENT(QString ip, int port);
+    void DELETE_CLIENT(QString ip, int port);
+    void ADD_SERVER(QString ip, int port);
+    void DELETE_SERVER(QString ip, int port);
+    void RETURN_RESULT(QString ip, int port, QString GRE);
 
 
 private:
@@ -104,7 +102,7 @@ public:
     udpServer(QHostAddress ip, quint16 port);
 
 signals:
-    void getMsgSuccess(std::string str);
+    void getMsgSuccess(QString str);
 private slots:
     void getMsg();
 
@@ -156,7 +154,7 @@ private:
 
 signals:
     void ReadyToSend();
-    void getMsgSuccess(std::string str);
+    void getMsgSuccess(QString str);
     void getFileSuccess();
 
 private slots:

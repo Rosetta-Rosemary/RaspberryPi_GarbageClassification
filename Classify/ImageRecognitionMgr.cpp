@@ -10,8 +10,8 @@ ImageRecognitionMgr::ImageRecognitionMgr()
         m_isRunAble = true;
     }
     
-    connect(this,SIGNAL(GET_RESULT(std::string)),
-            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(std::string)));
+    connect(this,SIGNAL(GET_RESULT(QString)),
+            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(QString)));
 
     PyRun_SimpleString("import sys");
 	PyRun_SimpleString("import os");
@@ -27,7 +27,7 @@ ImageRecognitionMgr::~ImageRecognitionMgr()
     Py_Finalize();
 }
 
-void ImageRecognitionMgr::IMAGE_RECOGNITION_TASK(std::string ip, int port, std::string GRE)
+void ImageRecognitionMgr::IMAGE_RECOGNITION_TASK(QString ip, int port, QString GRE)
 {
     m_waitMtx.lock();
     m_strip = ip;
@@ -49,16 +49,16 @@ void ImageRecognitionMgr::runImageRecognitionMgr()
             cout << "Find Python File Failed!" << endl;
         }
         pFunc = PyObject_GetAttrString(pModule, "ImageRecognition");//这里是要调用的函数名
-        PyObject* args = Py_BuildValue("(s)", m_strFilename);//给python函数参数赋值
+        PyObject* args = Py_BuildValue("(s)", m_strFilename.toStdString());//给python函数参数赋值
         PyObject* pRet = PyObject_CallObject(pFunc, args);//调用函数
         int res = 99;
         PyArg_Parse(pRet,"i",&res);//转换返回类型
         cout << "res:" << res << endl;//输出结果
         {
-            std::string TaskMsg = m_strip + " " + 
-                                std::to_string((int)m_iport) + " " +
+            QString TaskMsg = m_strip + " " + 
+                                QString::number(m_iport) + " " +
                                 "ClassifyTask" + " " +
-                                std::to_string((int)res);
+                                QString::number(res);
             
             emit(GET_RESULT(TaskMsg));
         }

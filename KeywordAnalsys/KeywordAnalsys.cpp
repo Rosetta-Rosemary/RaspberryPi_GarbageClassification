@@ -20,44 +20,46 @@ bool KeywordAnalsys::KeywordAnalsysInit()
 {
     using namespace std;
 
-    char buffer[256];  
+    string buffer;  
     ifstream in("Keyword.ini");  
     if (!in.is_open())  
     { 
         LogService::addLog(std::string("Error opening file"));
         return false; 
     }  
+    getline(in,buffer,'\n');
     while (!in.eof())  
     {  
-        in.getline (buffer,100);
         QString qstrKeyword = QString::fromStdString(string(buffer));
         QStringList Keywordlist = qstrKeyword.split(" ");
         int KeywordNumber = Keywordlist.at(1).toInt();
-        QString Keyword = Keywordlist.at(0);
-        KeywordMap.insert(pair<QString, int>(Keyword,KeywordNumber));
+        std::string Keyword = Keywordlist.at(0).toStdString();
+        KeywordMap.insert(pair<string, int>(Keyword,KeywordNumber));
+        getline(in,buffer,'\n');
     }
     if(KeywordMap.empty())
     {
         return false;
     }
-    std::map<QString,int>::iterator it = KeywordMap.begin();
+    std::map<string,int>::iterator it = KeywordMap.begin();
     LogService::addLog(std::string("get keyword from ini file success"));
     while(it != KeywordMap.end())
     {
+        LogService::addLog(it->first + string(" ") + to_string(it->second));
         it++;
     }
 
     return true;
 }
 
-void KeywordAnalsys::runKeywordAnalsys(std::string strMsg)
+void KeywordAnalsys::runKeywordAnalsys(QString strMsg)
 {
     std::cout << "runKeywordAnalsys" << std::endl;
-    LogService::addLog(std::string("[runKeywordAnalsys] ") + strMsg);
-    QString qstrMsg = QString::fromStdString(strMsg);
+    LogService::addLog(QString("[runKeywordAnalsys] ") + strMsg);
+    QString qstrMsg = strMsg;
     QStringList Msglist = qstrMsg.split(" ");
-    QString Keyword = Msglist.at(2);
-    std::map<QString,int>::iterator iter = KeywordMap.find(Keyword);
+    std::string Keyword = Msglist.at(2).toStdString();
+    std::map<std::string,int>::iterator iter = KeywordMap.find(Keyword);
     if(iter == KeywordMap.end())
     {
         LogService::addLog(std::string("Lost Func at runKeywordAnalsys"));
@@ -65,12 +67,12 @@ void KeywordAnalsys::runKeywordAnalsys(std::string strMsg)
     else
     {
         ServerTask *task = new ServerTask;
-        task->strIp = Msglist.at(0).toStdString();
+        task->strIp = Msglist.at(0);
         task->iPort = Msglist.at(1).toInt();
         task->iTaskType = iter->second;
         if(Msglist.size() >= 4)
         {
-            task->stdRecord = Msglist.at(3).toStdString();
+            task->stdRecord = Msglist.at(3);
         }
         AddTask(task);
     }

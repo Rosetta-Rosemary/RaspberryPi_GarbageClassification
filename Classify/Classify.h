@@ -32,10 +32,10 @@ public:
     string getClassifyResult(int &acc);
 
 signals:
-    void GET_RESULT(std::string str);
+    void GET_RESULT(QString str);
 
 private slots:   
-    void CLASSIFY_TASK(std::string ip, int port, std::string strType);
+    void CLASSIFY_TASK(QString ip, int port, QString strType);
 
 private:
     Classify();
@@ -65,10 +65,10 @@ public:
     ~ImageRecognitionMgr();
 
 signals:
-    void GET_RESULT(std::string str);
+    void GET_RESULT(QString str);
 
 private slots:
-    void IMAGE_RECOGNITION_TASK(std::string ip, int port, std::string GRE);
+    void IMAGE_RECOGNITION_TASK(QString ip, int port, QString GRE);
 
 private:
     ImageRecognitionMgr();
@@ -80,9 +80,9 @@ protected:
     static ImageRecognitionMgr *instance;
     std::mutex m_runMtx;
     std::mutex m_waitMtx;
-    std::string m_strip;
+    QString m_strip;
     int m_iport;
-    std::string m_strFilename;
+    QString m_strFilename;
     bool m_isRunAble = false;
 };
 #endif

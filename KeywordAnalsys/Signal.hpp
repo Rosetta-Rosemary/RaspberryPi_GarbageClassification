@@ -20,14 +20,14 @@ public:
 signals:
     void ExitSingal();
 
-    void AddClient(std::string ip, int port);
-    void DeleteClient(std::string ip, int port);
-    void AddServer(std::string ip, int port);
-    void DeleteServer(std::string ip, int port);
+    void AddClient(QString ip, int port);
+    void DeleteClient(QString ip, int port);
+    void AddServer(QString ip, int port);
+    void DeleteServer(QString ip, int port);
 
-    void ClassifyTask(std::string ip, int port, std::string GRE);
-    void ResultReturn(std::string ip, int port, std::string GRE);
-    void ImageRecognitionTask(std::string ip, int port, std::string GRE);
+    void ClassifyTask(QString ip, int port, QString GRE);
+    void ResultReturn(QString ip, int port, QString GRE);
+    void ImageRecognitionTask(QString ip, int port, QString GRE);
     
 
 

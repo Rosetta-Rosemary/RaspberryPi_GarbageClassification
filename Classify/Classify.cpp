@@ -14,10 +14,10 @@ Classify::Classify()
     else
     {
         printf("[Debug]Model Classify Init Success\n");
-        connect(Signal::get_instance(),SIGNAL(ClassifyTask(std::string, int, std::string)),
-            this,SLOT(CLASSIFY_TASK(std::string, int, std::string)));
-        connect(this,SIGNAL(GET_RESULT(std::string)),
-            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(std::string)));
+        connect(Signal::get_instance(),SIGNAL(ClassifyTask(QString, int, QString)),
+            this,SLOT(CLASSIFY_TASK(QString, int, QString)));
+        connect(this,SIGNAL(GET_RESULT(QString)),
+            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(QString)));
     }
 }
 
@@ -126,10 +126,10 @@ bool Classify::initClassify()
     return true;
 }
 
-void Classify::CLASSIFY_TASK(std::string ip, int port, std::string strType)
+void Classify::CLASSIFY_TASK(QString ip, int port, QString strType)
 {
-    int iAcc = atoi(strType.c_str());
+    int iAcc = strType.toInt();
     string strResult = runClassify(iAcc);
-    string str = ip + " " + std::to_string((int)port) + " Result " + strResult;
+    QString str = ip + " " + QString::number(port) + " ResultReturn " + QString::fromStdString(strResult);
     emit(GET_RESULT(str));
 }

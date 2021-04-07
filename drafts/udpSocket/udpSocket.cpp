@@ -34,7 +34,7 @@ void udpServer::Exit()
     cout << "UdpSocket.cpp(26)" << endl;
     if(udpsocket != NULL)
     {
-        _sleep(1000);
+        staticSleep(1000);
     }
     else
         cout << "UdpSocket.cpp(33)" << endl;

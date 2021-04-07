@@ -35,8 +35,8 @@ bool udpServer::Init()
                             this,SLOT(getMsg()));
     if(bconnect)
     {
-        connect(this,SIGNAL(getMsgSuccess(std::string)),
-            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(std::string)));
+        connect(this,SIGNAL(getMsgSuccess(QString)),
+            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(QString)));
     }
     udpsocket->waitForBytesWritten(1000);
     LogService::addLog(QString("UdpServer Init success"));
@@ -60,7 +60,7 @@ void udpServer::getMsg()
         str = str + "Message is : " +  strGetMsg;
         LogService::get_instance()->setLog(str);
     }
-    emit(getMsgSuccess(strGetMsg));
+    emit(getMsgSuccess(QString::fromStdString(strGetMsg)));
 }
 
 void udpServer::setSocketIpAndPort(string strIp, int iport)

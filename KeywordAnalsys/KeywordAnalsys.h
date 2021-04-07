@@ -14,10 +14,10 @@
 
 struct ServerTask
 {
-    std::string strIp;
+    QString strIp;
     int iPort;
     int iTaskType;
-    std::string stdRecord;
+    QString stdRecord;
 };
 
 class KeywordAnalsys : public QObject
@@ -40,7 +40,7 @@ signals:
     void EXIT();
 
 public slots:
-    void runKeywordAnalsys(std::string strMsg);
+    void runKeywordAnalsys(QString strMsg);
 
 private:
     KeywordAnalsys();
@@ -53,7 +53,7 @@ private:
 
     static std::list<ServerTask*> m_queTask;
 
-    std::map<QString, int> KeywordMap;
+    std::map<std::string, int> KeywordMap;
     bool m_bRun = true;
 };
 

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <Python.h>
 #include <QApplication>
-#include <windows.h>
+
 
 #include <XmlReader.h>
 #include <Classify.h>
@@ -12,4 +12,5 @@
 
 struct ServerWork;
 struct ServerAddress;
+
 #endif

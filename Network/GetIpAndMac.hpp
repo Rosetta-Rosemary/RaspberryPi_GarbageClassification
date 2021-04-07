@@ -6,6 +6,12 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <stdio.h>
+#include <windows.h>
+
+static void staticSleep(int iTime)
+{
+    _sleep(iTime);
+}
 
 static bool GetLocalIP(std::string &ip)
 {
@@ -40,6 +46,11 @@ static bool GetLocalIP(std::string &ip)
 #include <arpa/inet.h>
 #include <string.h>
 #include <list>
+
+static void staticSleep(int iTime)
+{
+    sleep(iTime);
+}
 
 int get_ip_linux(int ipv4_6, std::list<std::string>& out_list_ip)
 {
