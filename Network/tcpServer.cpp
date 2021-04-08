@@ -26,8 +26,11 @@ tcpServer::tcpServer(quint16 port)
 bool tcpServer::Init()
 {
     connect(&m_tcpServer,&QTcpServer::newConnection,this,&tcpServer::newListen);
-    m_tcpServer.listen(QHostAddress::Any,m_qport);
-    //connect(this,&tcpServer::)
+        m_tcpServer.listen(QHostAddress::Any,m_qport);
+    connect(this,SIGNAL(getMsgSuccess(QString)),
+            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(QString)));
+    connect(this,SIGNAL(getFileSuccess(QString)),
+            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(QString)));
 }
 
 void tcpServer::SendInit()
@@ -72,6 +75,7 @@ void tcpServer::RecvFileData()
     quint16 port;
     //获取连接客户端的连接者
     QTcpSocket *msocket=dynamic_cast<QTcpSocket *>(sender());
+    QString qFilename;
     //表示读取一个数据，读取文件头信息，将客户端的文件头信息获取到自己的file里面
     if(filesize == 0)
     {
@@ -86,6 +90,7 @@ void tcpServer::RecvFileData()
         QString dir=".";
         //文件保存路径
         QString filenames = dir + "/" + filename;
+        qFilename = filenames;
         //打开文件
         file.setFileName(filenames);
         file.open(QIODevice::WriteOnly);
@@ -104,9 +109,14 @@ void tcpServer::RecvFileData()
     {
         //关闭文件
         file.close();
+        QString ip = msocket->peerAddress().toString();
+        qint16 port = msocket->peerPort();
         //关闭套接字
         msocket->disconnectFromHost();
-        emit(getFileSuccess());
+        QString qPort = QString::number(port);
+        QString qstrMsg = ip + " " + qPort + " ImageRecognitionTask " + qFilename;
+ 
+        emit(getFileSuccess(qstrMsg));
     }
 }
 

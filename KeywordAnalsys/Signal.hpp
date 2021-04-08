@@ -18,16 +18,16 @@ public:
     ~Signal(){};
 
 signals:
-    void ExitSingal();
+    void ExitSingal(); //  EXIT 0
 
-    void AddClient(QString ip, int port);
-    void DeleteClient(QString ip, int port);
-    void AddServer(QString ip, int port);
-    void DeleteServer(QString ip, int port);
+    void AddClient(QString ip, int port); // AddClient 1
+    void DeleteClient(QString ip, int port); // DeleteClient 2
+    void AddServer(QString ip, int port); // AddServer 3
+    void DeleteServer(QString ip, int port); // DeleteServer 4
 
-    void ClassifyTask(QString ip, int port, QString GRE);
-    void ResultReturn(QString ip, int port, QString GRE);
-    void ImageRecognitionTask(QString ip, int port, QString GRE);
+    void ClassifyTask(QString ip, int port, QString GRE); // ClassifyTask 5
+    void ResultReturn(QString ip, int port, QString GRE); // ResultReturn 6
+    void ImageRecognitionTask(QString ip, int port, QString GRE); // ImageRecognitionTask 7
     
 
 

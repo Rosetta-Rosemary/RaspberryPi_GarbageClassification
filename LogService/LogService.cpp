@@ -68,7 +68,7 @@ void LogService::TimerRun()
     m_pTimer = new QTimer;
     connect(m_pTimer,SIGNAL(timeout()),
             this,SLOT(TimerOut()));
-    m_pTimer->start(60);
+    m_pTimer->start(60000);
 }
 
 void LogService::TimerOut()

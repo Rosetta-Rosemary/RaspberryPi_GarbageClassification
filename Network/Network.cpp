@@ -11,6 +11,7 @@ Network::Network()
         std::string strBoardcastiP = Network::getBoardcastAddress();
         udpClient::SendMsg(std::string("SERVER"),strBoardcastiP,26601);
     }
+    TimerRun();
 }
 
 Network::~Network()
@@ -32,6 +33,23 @@ void Network::Init()
         this,SLOT(DELETE_SERVER(QString, int)));  
     connect(Signal::get_instance(),SIGNAL(ResultReturn(QString, int, QString)),
         this,SLOT(RETURN_RESULT(QString, int, QString)));
+}
+
+void Network::TimerRun()
+{
+    m_pTimer = new QTimer;
+    connect(m_pTimer,SIGNAL(timeout()),
+            this,SLOT(TimerOut()));
+    m_pTimer->start(300000);
+}
+
+void Network::TimerOut()
+{
+    {
+        std::string strBoardcastiP = Network::getBoardcastAddress();
+        udpClient::SendMsg(std::string("AddServer"),strBoardcastiP,26601);
+        LogService::addLog(QString("服务器广播"));
+    }
 }
 
 void Network::AddServer(std::string ip,int port)
@@ -56,6 +74,10 @@ void Network::TcpRecvServer(int port)
 
 void Network::EXIT()
 {
+    {
+        std::string strBoardcastiP = Network::getBoardcastAddress();
+        udpClient::SendMsg(std::string("DeleteServer"),strBoardcastiP,26602);
+    }
     if(!vecServerNetwork.empty())
     {
         for(auto iter = vecServerNetwork.begin();
@@ -78,10 +100,27 @@ void Network::ADD_CLIENT(QString ip, int port)
     ClientAddress addClient;
     addClient.ip = ip;
     addClient.port = port;
-    vectClient.push_back(addClient);
+    vector<ClientAddress>::iterator iter = vectClient.begin();
+    bool bFind = false;
+    for(iter; iter != vectClient.end(); iter++)
     {
-        udpClient::SendMsg(std::string("SERVER"),ip.toStdString(),port);
+        if(iter->ip == addClient.ip && iter->port == addClient.port)
+        {
+            bFind = true;
+        }
     }
+    if(!bFind)
+    {
+        vectClient.push_back(addClient);
+        {
+            udpClient::SendMsg(std::string("AddServer"),ip.toStdString(),port);
+        }
+    }
+    else
+    {
+
+    }
+
 }
 
 void Network::DELETE_CLIENT(QString ip, int port)
@@ -112,10 +151,27 @@ void Network::ADD_SERVER(QString ip, int port)
     ServerAddress addServer;
     addServer.strip = ip;
     addServer.iport = port;
-    vectServer.push_back(addServer);
+        vector<ServerAddress>::iterator iter = vectServer.begin();
+    bool bFind = false;
+    for(iter; iter != vectServer.end(); iter++)
     {
-        udpClient::SendMsg(std::string("CLIENT"),ip.toStdString(),port);
+        if(iter->strip == addServer.strip && iter->iport == addServer.iport)
+        {
+            bFind = true;
+        }
     }
+    if(!bFind)
+    {
+        vectServer.push_back(addServer);
+        {
+            udpClient::SendMsg(std::string("AddClient"),ip.toStdString(),port);
+        }
+    }
+    else
+    {
+        
+    }
+
 }
 
 void Network::DELETE_SERVER(QString ip, int port)

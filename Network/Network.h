@@ -18,7 +18,8 @@
 #include <QDataStream>
 #include <QDir>
 #include <QFileInfo>//文件属性
-
+#include <QThread>
+#include <QTimer>
 #include <KeywordAnalsys.h>
 #include <GetIpAndMac.hpp>
 
@@ -80,13 +81,17 @@ private slots:
     void DELETE_SERVER(QString ip, int port);
     void RETURN_RESULT(QString ip, int port, QString GRE);
 
+    void TimerOut();
 
 private:
     Network();
     void Init();
+    void TimerRun();
 
 protected:
     static Network *instance;
+    QTimer *m_pTimer;
+
     std::vector<std::shared_ptr<ServerWork>> vecServerNetwork;
     std::vector<ClientAddress> vectClient;
     std::vector<ServerAddress> vectServer;
@@ -155,7 +160,7 @@ private:
 signals:
     void ReadyToSend();
     void getMsgSuccess(QString str);
-    void getFileSuccess();
+    void getFileSuccess(QString str);
 
 private slots:
     void newListen();
