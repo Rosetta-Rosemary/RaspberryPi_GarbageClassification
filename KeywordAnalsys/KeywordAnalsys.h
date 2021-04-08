@@ -27,10 +27,12 @@ public:
     ~KeywordAnalsys();
     static KeywordAnalsys * get_instacne()
     {
-        using namespace std;
-        cout << "get instance" << endl;
-        static KeywordAnalsys static_KeywordAnalsys;
-        return &static_KeywordAnalsys;
+        if (instance == NULL)
+        {
+            instance = new KeywordAnalsys;
+        }
+      
+        return instance;
     };
     bool KeywordAnalsysInit();
 
@@ -51,6 +53,7 @@ private:
 
     void ProcessData(ServerTask* &task);
 
+    static KeywordAnalsys * instance;
     static std::list<ServerTask*> m_queTask;
 
     std::map<std::string, int> KeywordMap;

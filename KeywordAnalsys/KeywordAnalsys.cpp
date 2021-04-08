@@ -1,5 +1,6 @@
 #include <KeywordAnalsys.h>
 
+KeywordAnalsys * KeywordAnalsys::instance;
 std::list<ServerTask*> KeywordAnalsys::m_queTask;
 Signal *Signal::instance;
 

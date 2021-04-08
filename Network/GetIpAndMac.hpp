@@ -46,13 +46,14 @@ static bool GetLocalIP(std::string &ip)
 #include <arpa/inet.h>
 #include <string.h>
 #include <list>
+#include <unistd.h>
 
 static void staticSleep(int iTime)
 {
     sleep(iTime);
 }
 
-int get_ip_linux(int ipv4_6, std::list<std::string>& out_list_ip)
+static int get_ip_linux(int ipv4_6, std::list<std::string>& out_list_ip)
 {
 	using namespace std;
     int ret_val = 0;
@@ -102,12 +103,12 @@ int get_ip_linux(int ipv4_6, std::list<std::string>& out_list_ip)
     return ret_val;
 }
 
-int get_ipv4_linux(std::list<std::string>& out_list_ip4)
+static int get_ipv4_linux(std::list<std::string>& out_list_ip4)
 {
     return get_ip_linux(AF_INET, out_list_ip4); 
 }
 
-int get_ipv6_linux(std::list<std::string>& out_list_ip6)
+static int get_ipv6_linux(std::list<std::string>& out_list_ip6)
 {
     return get_ip_linux(AF_INET6, out_list_ip6); 
 }

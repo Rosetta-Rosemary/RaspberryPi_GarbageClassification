@@ -9,7 +9,7 @@ Network::Network()
     Init();
     {
         std::string strBoardcastiP = Network::getBoardcastAddress();
-        udpClient::SendMsg(std::string("SERVER"),strBoardcastiP,26601);
+        udpClient::SendMsg(std::string("SERVER"),strBoardcastiP,26602);
     }
     TimerRun();
 }
@@ -47,7 +47,7 @@ void Network::TimerOut()
 {
     {
         std::string strBoardcastiP = Network::getBoardcastAddress();
-        udpClient::SendMsg(std::string("AddServer"),strBoardcastiP,26601);
+        udpClient::SendMsg(std::string("AddServer"),strBoardcastiP,26602);
         LogService::addLog(QString("服务器广播"));
     }
 }

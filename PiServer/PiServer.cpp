@@ -15,11 +15,15 @@ int main(int argc, char *argv[])
 
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    LogMgrThread *pLogMgr = LogMgrThread::get_instance();
-    pLogMgr->start();
+    LogMgrThread *pLogMgrThread = LogMgrThread::get_instance();
+    pLogMgrThread->start();
 
-    KeywordAnalsysTaskMgr *pKeywordMgr = KeywordAnalsysTaskMgr::get_instance();
-    pKeywordMgr->start();
+    KeywordAnalsys *pKeywordAnalsys = KeywordAnalsys::get_instacne();
+    XmlReader *pXmlReader = XmlReader::get_instance();
+    Classify *pClassify = Classify::get_instacne();
+
+    KeywordAnalsysTaskMgr *pKeywordAnalsysTaskMgr = KeywordAnalsysTaskMgr::get_instance();
+    pKeywordAnalsysTaskMgr->start();
 
     //ImageRecognitionMgr *pImageRecognitionMgr = ImageRecognitionMgr::get_instance();
     //pImageRecognitionMgr->start();
@@ -32,9 +36,6 @@ int main(int argc, char *argv[])
     Network::get_instance()->AddServer("127.0.0.1", 26601);
     Network::get_instance()->AddServer(strip, 26602);
     
-
-    XmlReader *reader = XmlReader::get_instance();
-    Classify *pClassify = Classify::get_instacne();
     LogService::addLog(QString("THIS IS PISERVER"));
 
     printf("This is main\n");
