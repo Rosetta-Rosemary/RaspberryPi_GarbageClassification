@@ -6,6 +6,9 @@ ImageRecognitionMgr::ImageRecognitionMgr()
 {
     if(!Py_IsInitialized())
     {
+        #ifdef _WIN32
+        Py_SetPythonHome(L"C:/Users/Rosetta/.conda/envs/Python7");
+        #endif
         Py_Initialize();
         m_isRunAble = true;
     }
@@ -15,11 +18,12 @@ ImageRecognitionMgr::ImageRecognitionMgr()
 
     PyRun_SimpleString("import sys");
 	PyRun_SimpleString("import os");
-    PyRun_SimpleString("sys.path.append('./')");
+    PyRun_SimpleString("sys.path.append('D:/DEMO_Project_All/')");
     PyRun_SimpleString("import numpy as np");
     PyRun_SimpleString("import tensorflow as tf");
     PyRun_SimpleString("from tensorflow.keras.preprocessing import image");
-    PyRun_SimpleString("model = tf.keras.models.load_model('./model_garbage_vgg16.h5')");
+    PyRun_SimpleString("model = tf.keras.models.load_model('D:/DEMO_Project_All/model_garbage_vgg16.h5')");
+    m_runMtx.lock();
 }
 
 ImageRecognitionMgr::~ImageRecognitionMgr()
@@ -40,7 +44,9 @@ void ImageRecognitionMgr::runImageRecognitionMgr()
 {
     while(m_isRunAble)
     {
+        std::cout << "1" << std::endl;
         m_runMtx.lock();
+        std::cout << "2" << std::endl;
         PyObject * pModule = NULL;//声明变量
         PyObject * pFunc = NULL;// 声明变量
         pModule = PyImport_ImportModule("ImageRecognition");//ImageRecognition.py

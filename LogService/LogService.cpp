@@ -41,7 +41,7 @@ bool LogService::writeLog(const QString &aqstrlog)
         out << LogString;
         m_Logfile->flush();
         this->FileClose();
-        qDebug() << LogString;
+        // qDebug() << LogString;
         return true;
     }
     else

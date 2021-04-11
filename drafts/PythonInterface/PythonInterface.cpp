@@ -10,6 +10,8 @@ bool PythonAPI::CapturePhoto()
     //Init Python model
     if(!Py_IsInitialized())
     {
+        //自己编译的时候记得修改PythonHome
+        Py_SetPythonHome(L"C:/Users/Rosetta/.conda/envs/Python7"); 
         Py_Initialize();
     }
 

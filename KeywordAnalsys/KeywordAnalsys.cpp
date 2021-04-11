@@ -131,17 +131,28 @@ void KeywordAnalsys::ProcessData(ServerTask* &task)
         break;
     case 4:
         emit(signal->DeleteServer(task->strIp, task->iPort));
-        break;            
+        break;    
     case 5:
+        emit(signal->AddServer(task->strIp, task->iPort));
+        break;       
+    case 6:
         emit(signal->ClassifyTask(task->strIp, task->iPort, task->stdRecord));
         break;   
-    case 6:
+    case 7:
         emit(signal->ResultReturn(task->strIp, task->iPort, task->stdRecord));
         break;  
-    case 7:
+    case 8:
         emit(signal->ImageRecognitionTask(task->strIp, task->iPort, task->stdRecord));
         break;
-    
+    case 20:
+        emit(signal->TakePicture());
+        break;
+    case 21:
+        emit(signal->ImageRecognitionResult(task->strIp, task->iPort, task->stdRecord));
+        break;
+    case 22:
+        emit(signal->GetTerminalState(task->stdRecord));
+        break;
     default:
         break;
     }

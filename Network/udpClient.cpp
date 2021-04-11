@@ -15,10 +15,12 @@ udpClient::~udpClient()
 
 void udpClient::SendMsg(std::string msg, std::string ip, int port)
 {
+    std::string LoaclIp;
+    GetLocalIP(LoaclIp);
     udpClient *client = new udpClient;
     QHostAddress qAdrIp = Network::StdString2QHostAddress(ip);
     quint16 qPort = Network::int2quint16(port);
-    std::string strmsg = ip + " " + std::to_string(port) + " " + msg;
+    std::string strmsg = LoaclIp + " " + std::to_string(port) + " " + msg;
     client->send(strmsg,qAdrIp,qPort);
 }
 
