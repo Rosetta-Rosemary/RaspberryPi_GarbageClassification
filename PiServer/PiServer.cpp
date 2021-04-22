@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
     Network::get_instance()->AddServer("127.0.0.1", 26601);
     Network::get_instance()->AddServer(strip, 26602);
     
+    
     LogService::addLog(QString("THIS IS PISERVER"));
 
     printf("This is main\n");

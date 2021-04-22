@@ -75,11 +75,14 @@ signals:
 
 private slots:
     void EXIT();
-    void ADD_CLIENT(QString ip, int port);
+    void ADD_CLIENT(QString ip, int port, QString GRE);
     void DELETE_CLIENT(QString ip, int port);
-    void ADD_SERVER(QString ip, int port);
-    void DELETE_SERVER(QString ip, int port);
+    void ADD_SERVER(QString ip, int port, QString GRE);
+    void DELETE_SERVER(QString ip, int port, QString GRE);
     void RETURN_RESULT(QString ip, int port, QString GRE);
+
+    void ClientTakePicture(QString ip, int port, QString GRE);
+    void ClientExit(QString ip, int port, QString GRE);
 
     void TimerOut();
 

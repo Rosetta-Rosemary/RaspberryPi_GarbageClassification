@@ -1,5 +1,5 @@
-#ifndef _TERMINALNETWORK_HPP_
-#define _TERMINALNETWORK_HPP_
+#ifndef _CLIENTNETWORK_HPP_
+#define _CLIENTNETWORK_HPP_
 
 #include <iostream>
 #include <map>
@@ -65,11 +65,19 @@ public:
     void AddServer(std::string ip,int port);
     void TcpRecvServer(int port);
 
+    void SearchServer();
+    bool bConnectServer;
+
+    static void SendMsgToServer(QString msg);
+
     static QHostAddress StdString2QHostAddress(string &ip);
     static quint16 int2quint16(int &iport);
     static std::string getBoardcastAddress();
-
+    
+    std::vector<ClientAddress> vectClient;
+    std::vector<ServerAddress> vectServer;
 signals:
+    void findServer(QString strip, int iport);
 
 private slots:
     void EXIT();
@@ -86,8 +94,6 @@ private:
 protected:
     static Network *instance;
     std::vector<std::shared_ptr<ServerWork>> vecServerNetwork;
-    std::vector<ClientAddress> vectClient;
-    std::vector<ServerAddress> vectServer;
 };
 
 class udpServer : public QObject

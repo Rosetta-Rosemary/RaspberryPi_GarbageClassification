@@ -5,7 +5,7 @@ find_package(Qt5Network CONFIG REQUIRED)
 find_package(Qt5Core CONFIG REQUIRED)
 find_package(PythonLibs REQUIRED)
 
- include_directories("./")
+ include_directories("${CMAKE_CURRENT_LIST_DIR}")
  include_directories(${PYTHON_INCLUDE_DIRS})
  include_directories("${PROJECT_SOURCE_DIR}/Classify")
  include_directories("${PROJECT_SOURCE_DIR}/LogService")

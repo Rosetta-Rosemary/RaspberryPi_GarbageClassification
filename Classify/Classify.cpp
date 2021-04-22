@@ -35,7 +35,10 @@ string Classify::runClassify(int &acc)
     if (iter != ClassTable.end())
     {
         cout << "Find it, the relative value is: " << (iter->second).strName.toStdString() << endl;
-        return (iter->second).strName.toStdString();
+        QString strNameofAcc = (iter->second).strName;
+        QString strClassesofAcc = (iter->second).strClasses;
+        QString strResult = strNameofAcc + "-" + strClassesofAcc;
+        return strResult.toStdString();
     }
     else
     {

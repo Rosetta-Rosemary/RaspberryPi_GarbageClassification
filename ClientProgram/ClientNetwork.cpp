@@ -1,4 +1,4 @@
-#include <TerminalNetwork.hpp>
+#include <ClientNetwork.hpp>
 
 using namespace std;
 
@@ -28,6 +28,32 @@ void Network::Init()
         this,SLOT(DELETE_SERVER(QString, int, QString)));  
     connect(Signal::get_instance(),SIGNAL(ResultReturn(QString, int, QString)),
         this,SLOT(RETURN_RESULT(QString, int, QString)));
+}
+
+void Network::SearchServer()
+{
+    bConnectServer = false;
+    std::string strBoardcastiP = Network::getBoardcastAddress();
+    std::string LoaclIp;
+    GetLocalIP(LoaclIp);
+    while(!bConnectServer)
+    {
+        udpClient::SendMsg(std::string("AddClient ")+ LoaclIp,strBoardcastiP,26602);
+        staticSleep(5000);
+        if (!vectServer.empty())
+        {
+            std::vector<ServerAddress>::iterator iter = vectServer.begin();
+            
+            QString ip = iter->strip;
+            int port = iter->iport;
+            emit(this->findServer(ip,port));
+            bConnectServer = true;
+            {
+                QString str = "Find Server Address : " + ip + ":" + QString::number(port);
+                LogService::addLog(str);
+            }
+        }
+    }  
 }
 
 void Network::AddServer(std::string ip,int port)
@@ -176,6 +202,18 @@ void Network::RETURN_RESULT(QString ip, int port, QString GRE)
 {
     std::string msg = "Result " + GRE.toStdString();
     udpClient::SendMsg(msg, ip.toStdString(), port);
+}
+
+void Network::SendMsgToServer(QString msg)
+{
+    Network *ptr = Network::get_instance();
+    std::vector<ServerAddress>::iterator iter = (ptr->vectServer).begin();
+    for(iter; iter != (ptr->vectServer).end(); iter++)
+    {
+        std::string ip = (iter->strip).toStdString();
+        int port = iter->iport;
+        udpClient::SendMsg(msg.toStdString(),ip,port);
+    }
 }
 
 QHostAddress Network::StdString2QHostAddress(string &ip)

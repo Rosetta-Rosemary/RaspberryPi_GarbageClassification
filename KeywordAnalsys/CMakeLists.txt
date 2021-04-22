@@ -1,12 +1,12 @@
-AUX_SOURCE_DIRECTORY(. DIR_SRCS)
+AUX_SOURCE_DIRECTORY(${CMAKE_CURRENT_LIST_DIR} DIR_SRCS)
+# include_directories(${DIR_SRCS})
 
-set(libKeywordAnalsys ./KeywordAnalsys.cpp ./KeywordAnalsysTaskMgr.cpp ./Signal.hpp)
+message("${DIR_SRCS}")
 
-include_directories("./")
 
 find_package(Qt5Core CONFIG REQUIRED)
 include_directories("${PROJECT_SOURCE_DIR}/LogService")
-add_library(KeywordAnalsys_shared SHARED ${libKeywordAnalsys})
+add_library(KeywordAnalsys_shared SHARED ${DIR_SRCS} ${CMAKE_CURRENT_LIST_DIR}/Signal.hpp)
 #add_library( PythonInterface_static STATIC ${libPythonInterface})
 target_link_libraries(KeywordAnalsys_shared Qt5::Core)
 target_link_libraries(KeywordAnalsys_shared LogService_shared)

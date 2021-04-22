@@ -121,27 +121,24 @@ void KeywordAnalsys::ProcessData(ServerTask* &task)
         emit(signal->ExitSingal());
         break;
     case 1:
-        emit(signal->AddClient(task->strIp, task->iPort));
+        emit(signal->AddClient(task->strIp, task->iPort, task->stdRecord));
         break;
     case 2:
         emit(signal->DeleteClient(task->strIp, task->iPort));
         break;
     case 3:
-        emit(signal->AddServer(task->strIp, task->iPort));
+        emit(signal->AddServer(task->strIp, task->iPort, task->stdRecord));
         break;
     case 4:
-        emit(signal->DeleteServer(task->strIp, task->iPort));
-        break;    
-    case 5:
-        emit(signal->AddServer(task->strIp, task->iPort));
-        break;       
-    case 6:
+        emit(signal->DeleteServer(task->strIp, task->iPort, task->stdRecord));
+        break;
+    case  5:
         emit(signal->ClassifyTask(task->strIp, task->iPort, task->stdRecord));
         break;   
-    case 7:
+    case 6:
         emit(signal->ResultReturn(task->strIp, task->iPort, task->stdRecord));
         break;  
-    case 8:
+    case 7:
         emit(signal->ImageRecognitionTask(task->strIp, task->iPort, task->stdRecord));
         break;
     case 20:
@@ -152,6 +149,24 @@ void KeywordAnalsys::ProcessData(ServerTask* &task)
         break;
     case 22:
         emit(signal->GetTerminalState(task->stdRecord));
+        break;
+    case 31:
+        emit(signal->AddLogMsg(task->strIp, task->iPort, task->stdRecord));
+        break;
+    case 32:
+        emit(signal->AddClientStatus(task->strIp, task->iPort, task->stdRecord));
+        break;
+    case 33:
+        emit(signal->DeleteClientStatus(task->strIp, task->iPort, task->stdRecord));
+        break;
+    case 34:
+        emit(signal->GetClientStatus(task->strIp, task->iPort, task->stdRecord));
+        break;
+    case 35:
+        emit(signal->ClientTakePicture(task->strIp, task->iPort, task->stdRecord));
+        break;
+    case 36:
+        emit(signal->ExitTheClient(task->strIp, task->iPort, task->stdRecord));
         break;
     default:
         break;
