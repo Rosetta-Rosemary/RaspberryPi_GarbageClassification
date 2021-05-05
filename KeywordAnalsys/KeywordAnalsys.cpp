@@ -141,6 +141,9 @@ void KeywordAnalsys::ProcessData(ServerTask* &task)
     case 7:
         emit(signal->ImageRecognitionTask(task->strIp, task->iPort, task->stdRecord));
         break;
+    case 8:
+        emit(signal->ReturnTerminalState(task->strIp, task->iPort, task->stdRecord));
+        break;   
     case 20:
         emit(signal->TakePicture());
         break;
@@ -148,8 +151,11 @@ void KeywordAnalsys::ProcessData(ServerTask* &task)
         emit(signal->ImageRecognitionResult(task->strIp, task->iPort, task->stdRecord));
         break;
     case 22:
-        emit(signal->GetTerminalState(task->stdRecord));
+        emit(signal->GetTerminalState(task->strIp, task->iPort));
         break;
+    case 23:
+        emit(signal->RequestStatus(task->strIp, task->iPort));
+        break;    
     case 31:
         emit(signal->AddLogMsg(task->strIp, task->iPort, task->stdRecord));
         break;
@@ -160,7 +166,7 @@ void KeywordAnalsys::ProcessData(ServerTask* &task)
         emit(signal->DeleteClientStatus(task->strIp, task->iPort, task->stdRecord));
         break;
     case 34:
-        emit(signal->GetClientStatus(task->strIp, task->iPort, task->stdRecord));
+        emit(signal->RequestClientStatus(task->strIp, task->iPort, task->stdRecord));
         break;
     case 35:
         emit(signal->ClientTakePicture(task->strIp, task->iPort, task->stdRecord));
@@ -168,6 +174,9 @@ void KeywordAnalsys::ProcessData(ServerTask* &task)
     case 36:
         emit(signal->ExitTheClient(task->strIp, task->iPort, task->stdRecord));
         break;
+     case 37:
+        emit(signal->GetClientStatus(task->stdRecord));
+        break;   
     default:
         break;
     }

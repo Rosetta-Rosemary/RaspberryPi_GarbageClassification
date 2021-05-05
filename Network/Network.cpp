@@ -29,17 +29,18 @@ void Network::Init()
         this,SLOT(ADD_CLIENT(QString, int, QString)));  
     connect(Signal::get_instance(),SIGNAL(DeleteClient(QString, int)),
         this,SLOT(DELETE_CLIENT(QString, int)));
-    connect(Signal::get_instance(),SIGNAL(AddServer(QString, int, QString)),
-        this,SLOT(ADD_SERVER(QString, int, QString)));  
-    connect(Signal::get_instance(),SIGNAL(DeleteServer(QString, int, QString)),
-        this,SLOT(DELETE_SERVER(QString, int, QString)));  
+    // connect(Signal::get_instance(),SIGNAL(AddServer(QString, int, QString)),
+    //     this,SLOT(ADD_SERVER(QString, int, QString)));  
+    // connect(Signal::get_instance(),SIGNAL(DeleteServer(QString, int, QString)),
+    //     this,SLOT(DELETE_SERVER(QString, int, QString)));  
     connect(Signal::get_instance(),SIGNAL(ResultReturn(QString, int, QString)),
         this,SLOT(RETURN_RESULT(QString, int, QString)));
-
     connect(Signal::get_instance(),SIGNAL(ClientTakePicture(QString, int, QString)),
         this,SLOT(ClientTakePicture(QString, int, QString)));
     connect(Signal::get_instance(),SIGNAL(ExitTheClient(QString, int, QString)),
         this,SLOT(ClientExit(QString, int, QString)));
+    connect(Signal::get_instance(),SIGNAL(RequestClientStatus(QString, int, QString)),
+        this,SLOT(Requests_TerminalState(QString, int, QString)));
 }
 
 void Network::TimerRun()
@@ -103,18 +104,24 @@ void Network::EXIT()
 void Network::ADD_CLIENT(QString ip, int port, QString GRE)
 {
     // GRE = "127.0.0.1"
+    std::string LoaclIp;
+    GetLocalIP(LoaclIp);
+    QString loacl = QString::fromStdString(LoaclIp);
+    if (loacl == GRE)
+    {
+        return;
+    }
     {
         QString str = "Add Client Address : " + ip + ":" + QString::number(port);
         LogService::addLog(str);
     }
-    ClientAddress addClient;
-    addClient.ip = GRE;
-    addClient.port = port;
-    vector<ClientAddress>::iterator iter = vectClient.begin();
+    ClientTarget *addClient = new ClientTarget(GRE,port);
+    vector<ClientTarget*>::iterator iter = vectClient.begin();
     bool bFind = false;
     for(iter; iter != vectClient.end(); iter++)
     {
-        if(iter->ip == addClient.ip && iter->port == addClient.port)
+        // ClientTarget *Target = &(*iter);
+        if(addClient->IsIpAndPortSame(*iter))
         {
             bFind = true;
         }
@@ -123,26 +130,30 @@ void Network::ADD_CLIENT(QString ip, int port, QString GRE)
     {
         vectClient.push_back(addClient);
         {
-            udpClient::SendMsg(std::string("AddServer"),GRE.toStdString(),port);
+            udpClient::SendMsg(std::string("AddServer ") + LoaclIp,GRE.toStdString(),port);
+            // 向终端获取详细信息 终端返回的消息指令为 AddClientStatus + GRE
+            udpClient::SendMsg(std::string("RequestStatus"),GRE.toStdString(),port);
         }
     }
     else
     {
-
+        
     }
 }
 
 void Network::DELETE_CLIENT(QString ip, int port)
 {
-    ClientAddress deleteClient;
-    deleteClient.ip = ip;
-    deleteClient.port = port;
+    ClientTarget *deleteClient = new ClientTarget(ip,port);
     for(auto iter = vectClient.begin();
         iter != vectClient.end(); iter++)
     {
-        if (deleteClient.ip == iter->ip && deleteClient.port == iter->port)
+        // ClientTarget *Target = &(*iter);
+        if(deleteClient->IsIpAndPortSame(*iter))
         {
-            iter = vectClient.erase(iter);
+            (*iter)->DeletePushButton();
+            vectClient.erase(iter);
+            
+            break;
         }
     }
     {
@@ -154,6 +165,13 @@ void Network::DELETE_CLIENT(QString ip, int port)
 void Network::ADD_SERVER(QString ip, int port, QString GRE)
 {
     // GRE = "127.0.0.1"
+    std::string LoaclIp;
+    GetLocalIP(LoaclIp);
+    QString loacl = QString::fromStdString(LoaclIp);
+    if (loacl == GRE)
+    {
+        return;
+    }
     {
         QString str = "Add Server Address : " + ip + ":" + QString::number(port);
         LogService::addLog(str);
@@ -161,7 +179,7 @@ void Network::ADD_SERVER(QString ip, int port, QString GRE)
     ServerAddress addServer;
     addServer.strip = GRE;
     addServer.iport = port;
-        vector<ServerAddress>::iterator iter = vectServer.begin();
+    vector<ServerAddress>::iterator iter = vectServer.begin();
     bool bFind = false;
     for(iter; iter != vectServer.end(); iter++)
     {
@@ -174,7 +192,7 @@ void Network::ADD_SERVER(QString ip, int port, QString GRE)
     {
         vectServer.push_back(addServer);
         {
-            udpClient::SendMsg(std::string("AddClient"),GRE.toStdString(),port);
+            udpClient::SendMsg(std::string("AddClient ") + LoaclIp,GRE.toStdString(),port);
         }
     }
     else
@@ -207,8 +225,9 @@ void Network::DELETE_SERVER(QString ip, int port, QString GRE)
 
 void Network::RETURN_RESULT(QString ip, int port, QString GRE)
 {
-    std::string msg = "Result " + GRE.toStdString();
+    std::string msg = "ImageRecognitionResult " + GRE.toStdString();
     udpClient::SendMsg(msg, ip.toStdString(), port);
+    emit(Signal::get_instance()->AddLogMsg(ip,port,GRE));
 }
 
 void Network::ClientTakePicture(QString ip, int port, QString GRE)
@@ -218,7 +237,7 @@ void Network::ClientTakePicture(QString ip, int port, QString GRE)
     QString qstrip = ClientList.at(0);
     QString qstrPort = ClientList.at(1);
     QString Keyword = QString("TakePicture");
-    udpClient::SendMsg(Keyword.toStdString(), ip.toStdString(), qstrPort.toInt());
+    udpClient::SendMsg(Keyword.toStdString(), qstrip.toStdString(), qstrPort.toInt());
 }
 
 void Network::ClientExit(QString ip, int port, QString GRE)
@@ -228,7 +247,52 @@ void Network::ClientExit(QString ip, int port, QString GRE)
     QString qstrip = ClientList.at(0);
     QString qstrPort = ClientList.at(1);
     QString Keyword = QString("EXIT");
-    udpClient::SendMsg(Keyword.toStdString(), ip.toStdString(), qstrPort.toInt());
+    udpClient::SendMsg(Keyword.toStdString(), qstrip.toStdString(), qstrPort.toInt());
+}
+
+void Network::GetClientStatus(QString ip, int port, QString GRE)
+{
+    // GRE = "127.0.0.1-26601"
+    QStringList ClientList = GRE.split("-");
+    QString qstrip = ClientList.at(0);
+    QString qstrPort = ClientList.at(1);
+    QString Keyword = QString("GetTerminalState");
+    QString str = Keyword + " " + ip + "-" + QString::number(port);
+    udpClient::SendMsg(str.toStdString(), qstrip.toStdString(), qstrPort.toInt());
+    // GRE = "客户端地址+端口"
+}
+
+void Network::ReturnClientStatus(QString ip, int port, QString GRE)
+{
+    // ip = 终端地址
+    // port = 终端端口
+    // GRE = "客户端地址-客户端端口-服务器地址-电量-支持垃圾的处理类型"
+    QStringList ClientStatusList = GRE.split("-");
+    QString qstrip = ClientStatusList.at(0);
+    QString qstrPort = ClientStatusList.at(1);
+    QString qstrServerIp = ClientStatusList.at(2);
+    QString qstrElectricQuantity = ClientStatusList.at(3);
+    QString qstrSupportedBusinessTypes = ClientStatusList.at(4);
+    QString Keyword = QString("GetTerminalState");
+    QString str = ip +  "-" + QString::number(port) + 
+                        "-" + qstrServerIp + 
+                        "-" + qstrElectricQuantity+
+                        "-" + qstrSupportedBusinessTypes;
+    emit(Signal::get_instance()->AddLogMsg(ip,port,GRE));
+    
+    // ip = 客户端地址
+    // port = 客户端端口 
+    // GRE = "终端地址-终端端口-服务器地址-电量-支持垃圾的处理类型"
+}
+
+void Network::Requests_TerminalState(QString ip, int port, QString GRE)
+{
+    // GRE = "终端地址-终端端口"
+    QStringList ClientStatusList = GRE.split("-");
+    QString qstrip = ClientStatusList.at(0);
+    QString qstrPort = ClientStatusList.at(1);
+    std::string Keyword = "GetTerminalState";
+    udpClient::SendMsg(Keyword,qstrip.toStdString(),qstrPort.toInt());
 }
 
 QHostAddress Network::StdString2QHostAddress(string &ip)
@@ -254,4 +318,16 @@ std::string Network::getBoardcastAddress()
                                     + qLoaclIpLists.at(2) + ".255";
         LogService::addLog(QString("getBoardcastAddress : ") + qBoardcastAddress);
         return qBoardcastAddress.toStdString();
+}
+
+void Network::SendMsgToServer(QString msg)
+{
+    Network *ptr = Network::get_instance();
+    std::vector<ServerAddress>::iterator iter = (ptr->vectServer).begin();
+    for(iter; iter != (ptr->vectServer).end(); iter++)
+    {
+        std::string ip = (iter->strip).toStdString();
+        int port = iter->iport;
+        udpClient::SendMsg(msg.toStdString(),ip,port);
+    }
 }

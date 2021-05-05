@@ -8,11 +8,21 @@ void ClientProgram::SlotInit()
             this,SLOT(slot_Add_ClientStatus(QString, int, QString)));
     connect(Signal::get_instance(),SIGNAL(DeleteClientStatus(QString, int, QString)),
             this,SLOT(slot_Delete_ClientStatus(QString, int, QString)));
+    connect(Signal::get_instance(),SIGNAL(GetClientStatus(QString, int, QString)),
+            this,SLOT(slot_Get_TerminalState(QString, int, QString)));
 
 }
 
 void ClientProgram::slot_Exit()
 {
+    std::string msg = "DeleteClient";
+    QUdpSocket udpsocket;
+    QString str = QString::fromStdString(msg);
+    QHostAddress ip(m_Server->strip);;
+    quint16 port = QString::number(m_Server->iport).toUInt();
+    udpsocket.writeDatagram(str.toUtf8(),512,ip,port);
+
+    std::cout << "DeleteClient" << std::endl;
     this->close();
 }
 
@@ -165,10 +175,50 @@ void ClientProgram::slot_Delete_ClientStatus(QString ip, int port, QString GRE)
 }
 
 void ClientProgram::slot_Request_All_ClientStatus()
-{}
+{
+
+}
 
 void ClientProgram::slot_Get_ClientStatus()
-{}
+{
+    // 获取终端数据
+    QString Keyword = QString("GetTerminalState ");
+    QString ip = ClientStatusLabelTemp->strip;
+    QString port = ClientStatusLabelTemp->strPort;
+    QString GRE = Keyword + " " + ip + "-" + port;
+    Network::SendMsgToServer(GRE);
+}
+
+void ClientProgram::slot_Get_TerminalState(QString ip, int port, QString GRE)
+{
+    // ip = 服务器地址
+    // port = 服务器端口 
+    // GRE = "终端地址-终端端口-服务器地址-电量-支持垃圾的处理类型"
+    QStringList ClientStatusList = GRE.split("-");
+    QString qstrip = ClientStatusList.at(0);
+    QString qstrPort = ClientStatusList.at(1);
+    QString qstrServerIp = ClientStatusList.at(2);
+    QString qstrElectricQuantity = ClientStatusList.at(3);
+    QString qstrSupportedBusinessTypes = ClientStatusList.at(4);
+
+    std::vector<ClientStatus *>::iterator iter = m_vctClientStatus.begin();
+    for (iter; iter != m_vctClientStatus.end(); iter++)
+    {
+        if (((*iter)->strip == qstrip) && ((*iter)->strPort == qstrPort))
+        {
+            (*iter)->strServerIp = qstrServerIp;
+            (*iter)->strElectricQuantity = qstrElectricQuantity;
+            (*iter)->strSupportedBusinessTypes = qstrSupportedBusinessTypes;
+
+            if (((*iter)->strip == L_Ip->text()) && ((*iter)->strPort == L_Port->text()))
+            {
+                L_ServerIp->setText(qstrServerIp);
+                L_ElectricQuantity->setText(qstrElectricQuantity);
+                L_SupportedBusinessTypes->setText(qstrSupportedBusinessTypes);
+            }
+        }
+    }
+}
 
 void ClientProgram::slot_TakePicture()
 {

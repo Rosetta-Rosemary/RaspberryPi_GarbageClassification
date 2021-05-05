@@ -69,6 +69,7 @@ signals:
 
 private slots:
     void IMAGE_RECOGNITION_TASK(QString ip, int port, QString GRE);
+    void TakePicture();
 
 private:
     ImageRecognitionMgr();
@@ -80,6 +81,12 @@ protected:
     static ImageRecognitionMgr *instance;
     std::mutex m_runMtx;
     std::mutex m_waitMtx;
+
+    PyObject* pModule = NULL;
+    PyObject* pFunc = NULL;
+    PyObject* pDict = NULL;
+    PyObject* pClass = NULL;
+    PyObject* pIns = NULL;
     QString m_strip;
     int m_iport;
     QString m_strFilename;

@@ -18,10 +18,10 @@ void Network::Init()
 {
     connect(Signal::get_instance(),SIGNAL(ExitSingal()),
         this,SLOT(EXIT()));
-    connect(Signal::get_instance(),SIGNAL(AddClient(QString, int, QString)),
-        this,SLOT(ADD_CLIENT(QString, int, QString)));  
-    connect(Signal::get_instance(),SIGNAL(DeleteClient(QString, int)),
-        this,SLOT(DELETE_CLIENT(QString, int)));
+    // connect(Signal::get_instance(),SIGNAL(AddClient(QString, int, QString)),
+    //    this,SLOT(ADD_CLIENT(QString, int, QString)));  
+    // connect(Signal::get_instance(),SIGNAL(DeleteClient(QString, int)),
+    //     this,SLOT(DELETE_CLIENT(QString, int)));
     connect(Signal::get_instance(),SIGNAL(AddServer(QString, int, QString)),
         this,SLOT(ADD_SERVER(QString, int, QString)));  
     connect(Signal::get_instance(),SIGNAL(DeleteServer(QString, int, QString)),
@@ -71,6 +71,14 @@ void Network::EXIT()
 
 void Network::ADD_CLIENT(QString ip, int port, QString GRE)
 {
+    // GRE = "127.0.0.1"
+    std::string LoaclIp;
+    GetLocalIP(LoaclIp);
+    QString loacl = QString::fromStdString(LoaclIp);
+    if (loacl == GRE)
+    {
+        return;
+    }
     {
         QString str = "Add Client Address : " + GRE + ":" + QString::number(port);
         LogService::addLog(str);
@@ -122,6 +130,14 @@ void Network::DELETE_CLIENT(QString ip, int port)
 
 void Network::ADD_SERVER(QString ip, int port, QString GRE)
 {
+    // GRE = "127.0.0.1"
+    std::string LoaclIp;
+    GetLocalIP(LoaclIp);
+    QString loacl = QString::fromStdString(LoaclIp);
+    if (loacl == GRE)
+    {
+        return;
+    }
     {
         QString str = "Add Server Address : " + GRE + ":" + QString::number(port);
         LogService::addLog(str);
@@ -142,14 +158,13 @@ void Network::ADD_SERVER(QString ip, int port, QString GRE)
     {
         vectServer.push_back(addServer);
         {
-            udpClient::SendMsg(std::string("AddClient"),GRE.toStdString(),port);
+            udpClient::SendMsg(std::string("AddClient ")+ LoaclIp,GRE.toStdString(),port);
         }
     }
     else
     {
         
     }
-
 }
 
 void Network::DELETE_SERVER(QString ip, int port, QString GRE)

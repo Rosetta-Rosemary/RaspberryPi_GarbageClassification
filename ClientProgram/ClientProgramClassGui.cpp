@@ -25,6 +25,16 @@ void ClientProgram::GuiStatusBarInit()
                             "QPushButton:pressed{background-color:rgb(215, 0, 0);\n" \
                                                 "padding-left:3px;padding-top:3px;}");
     connect(PB_ShowOrHide,SIGNAL(clicked()),this,SLOT(slot_Exit()));
+
+    L_Server = new QLabel(W_StatusBar);
+    L_Server->setGeometry(163, 2, 125, 26);
+    L_Server->setStyleSheet("color:black;background-color: rgb(255, 255, 255);border-radius:10px;font: bold 10pt \"微软雅黑\";");
+    L_Server->setAlignment(Qt::AlignCenter);
+
+    L_ServerPort = new QLabel(W_StatusBar);
+    L_ServerPort->setGeometry(290, 2, 65, 26);
+    L_ServerPort->setStyleSheet("color:black;background-color: rgb(255, 255, 255);border-radius:10px;font: bold 10pt \"微软雅黑\";");
+    L_ServerPort->setAlignment(Qt::AlignCenter);
 }
 
 void ClientProgram::GuiLogShowInit()

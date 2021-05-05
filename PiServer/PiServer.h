@@ -10,7 +10,12 @@
 #include <Classify.h>
 #include <Network.h>
 
+#include <ClientQuickStart.h>
+#include <TerminalModule.hpp>
+
 struct ServerWork;
 struct ServerAddress;
+
+TerminalModule * TerminalModule::instance;
 
 #endif

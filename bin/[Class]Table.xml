@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LableTable>
     <GarbageList>
-        <Garbage id = '0' Name = '剩饭剩菜' Class = '厨余垃圾'/>
-        <Garbage id = '1' Name = '包' Class = '可回收垃圾'/>
-        <Garbage id = '2' Name = '干电池' Class = '有害垃圾'/>
-        <Garbage id = '3' Name = '易拉罐' Class = '可回收垃圾'/>
-        <Garbage id = '4' Name = '纸板箱' Class = '可回收垃圾'/>
-        <Garbage id = '5' Name = '蛋壳' Class = '厨余垃圾'/>
-        <Garbage id = '6' Name = '饮料瓶' Class = '可回收垃圾'/>
+        <Garbage id = '0' Name = '一次性餐盒' Class = '可回收垃圾'/>
+        <Garbage id = '1' Name = '充电宝' Class = '可回收垃圾'/>
+        <Garbage id = '2' Name = '剩饭剩菜' Class = '厨余垃圾'/>
+        <Garbage id = '3' Name = '包' Class = '可回收垃圾'/>
+        <Garbage id = '4' Name = '塑料衣架' Class = '可回收垃圾'/>
+        <Garbage id = '5' Name = '大骨头' Class = '厨余垃圾'/>
+        <Garbage id = '6' Name = '干电池' Class = '可回收垃圾'/>
+        <Garbage id = '7' Name = '快递纸袋' Class = '可回收垃圾'/>
+        <Garbage id = '8' Name = '旧衣服' Class = '可回收垃圾'/>
+        <Garbage id = '9' Name = '易拉罐' Class = '可回收垃圾'/>
+        <Garbage id = '10' Name = '果皮' Class = '厨余垃圾'/>
+        <Garbage id = '11' Name = '烂果肉' Class = '厨余垃圾'/>
+        <Garbage id = '12' Name = '烟蒂' Class = '有害垃圾'/>
+        <Garbage id = '13' Name = '破碎玻璃杯' Class = '可回收垃圾'/>
+        <Garbage id = '14' Name = '纸板箱' Class = '可回收垃圾'/>
+        <Garbage id = '15' Name = '蛋壳' Class = '厨余垃圾'/>
+        <Garbage id = '16' Name = '软膏' Class = '可回收垃圾'/>
+        <Garbage id = '17' Name = '食用油桶' Class = '可回收垃圾'/>
+        <Garbage id = '18' Name = '饮料瓶' Class = '可回收垃圾'/>
+        <Garbage id = '19' Name = '鱼骨' Class = '厨余垃圾'/>
     </GarbageList>
 </LableTable>
 

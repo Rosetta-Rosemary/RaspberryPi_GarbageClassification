@@ -22,6 +22,7 @@
 #include <QTimer>
 #include <KeywordAnalsys.h>
 #include <GetIpAndMac.hpp>
+#include <ClientTarget.hpp>
 
 using namespace std;
 
@@ -71,6 +72,12 @@ public:
     static quint16 int2quint16(int &iport);
     static std::string getBoardcastAddress();
 
+    bool bConnectServer;
+
+    static void SendMsgToServer(QString msg);
+
+    std::vector<ClientTarget*> vectClient;
+
 signals:
 
 private slots:
@@ -83,6 +90,9 @@ private slots:
 
     void ClientTakePicture(QString ip, int port, QString GRE);
     void ClientExit(QString ip, int port, QString GRE);
+    void GetClientStatus(QString ip, int port, QString GRE);
+    void ReturnClientStatus(QString ip, int port, QString GRE);
+    void Requests_TerminalState(QString ip, int port, QString GRE);
 
     void TimerOut();
 
@@ -96,7 +106,6 @@ protected:
     QTimer *m_pTimer;
 
     std::vector<std::shared_ptr<ServerWork>> vecServerNetwork;
-    std::vector<ClientAddress> vectClient;
     std::vector<ServerAddress> vectServer;
 };
 
@@ -152,6 +161,8 @@ public:
     tcpServer(int iport);
     tcpServer(quint16 port);
     void ReadyToClient();
+
+
 
 private:
     bool Init();

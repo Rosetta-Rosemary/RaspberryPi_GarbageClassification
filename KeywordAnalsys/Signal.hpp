@@ -30,19 +30,22 @@ signals:
     void ClassifyTask(QString ip, int port, QString GRE); // ClassifyTask 5
     void ResultReturn(QString ip, int port, QString GRE); // ResultReturn 6
     void ImageRecognitionTask(QString ip, int port, QString GRE); // ImageRecognitionTask 7
+    void ReturnTerminalState(QString ip, int port, QString GRE); // ReturnTerminalState 8
     
     //这一段是给终端de信号
     void TakePicture(); // TakePicture 20
     void ImageRecognitionResult(QString ip, int port, QString GRE); // ImageRecognitionResult 21
-    void GetTerminalState(QString GRE); // GetTerminalState 22
+    void GetTerminalState(QString ip, int port); // GetTerminalState 22
+    void RequestStatus(QString ip, int port); // RequestStatus 23
 
     //这一段是给客户端的信号
     void AddLogMsg(QString ip, int port, QString GRE); // AddLogMsg 31
     void AddClientStatus(QString ip, int port, QString GRE); // AddClientStatus 32
     void DeleteClientStatus(QString ip, int port, QString GRE); // DeleteClientStatus 33
-    void GetClientStatus(QString ip, int port, QString GRE); // GetClientStatus 34
+    void RequestClientStatus(QString ip, int port, QString GRE); // RequestClientStatus 34
     void ClientTakePicture(QString ip, int port, QString GRE); // ClientTakePicture 35
     void ExitTheClient(QString ip, int port, QString GRE); // ExitTheClient 36
+    void GetClientStatus(QString GRE); // GetClientStatus 37
 
 private:    
     static Signal *instance;

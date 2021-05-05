@@ -43,9 +43,9 @@ string Classify::runClassify(int &acc)
     else
     {
         cout << "Can not find the relative value." << endl;
-        return "UNKNOW";
+        return "UNKNOW-UNKNOW";
     }
-    return "UNKNOW";
+    return "UNKNOW-UNKNOW";
 }
 
 bool Classify::initClassify()
@@ -119,7 +119,6 @@ bool Classify::initClassify()
 
     ClassTable = reader->getVecClassInfo();
     map<int, SortBill>::iterator iter = ClassTable.begin();
-    
     
     if(ClassTable.empty())
     {

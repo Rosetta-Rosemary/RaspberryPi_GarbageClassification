@@ -44,6 +44,8 @@ public:
         return instance;
     }
 
+    void setServerStatus(QString ip, int port);
+
     ~ClientProgram();
 
 signals:
@@ -66,6 +68,7 @@ private slots:
     void slot_Add_ClientStatus(QString ip, int port, QString GRE);
     void slot_Delete_ClientStatus(QString ip, int port, QString GRE);
     void slot_Get_ClientStatus();
+    void slot_Get_TerminalState(QString ip, int port, QString GRE);
     void slot_Request_All_ClientStatus();
     void slot_TakePicture();
     void slot_ExitTheClient();
@@ -94,8 +97,12 @@ protected:
     Ui::ClientProgram *ui;
     static ClientProgram *instance;
 
+    ServerAddress *m_Server;
+
     QWidget *W_StatusBar;////QWidget->用来显示状态栏
     QPushButton *PB_ShowOrHide;
+    QLabel *L_Server;
+    QLabel *L_ServerPort;
     
     QWidget *W_LogShow;//QWidget->用来显示服务器上的处理结果
     QScrollArea *SA_LogShow;

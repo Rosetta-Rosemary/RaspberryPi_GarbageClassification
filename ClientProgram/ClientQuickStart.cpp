@@ -39,4 +39,7 @@ void ClientQuickStart::slot_searchServer()
 void ClientQuickStart::slot_findServer(QString ip, int port)
 {
     ClientProgram *w = ClientProgram::get_instance();
+    w->setServerStatus(ip,port);
+    std::cout << ip.toStdString() << "::" << port << std::endl;
+    this->hide();
 }

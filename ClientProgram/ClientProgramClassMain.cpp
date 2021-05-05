@@ -17,6 +17,18 @@ ClientProgram::~ClientProgram()
     this->close();
 }
 
+void ClientProgram::setServerStatus(QString ip, int port)
+{
+    if (m_Server != nullptr)
+    {
+        m_Server = new ServerAddress;
+        m_Server->strip = ip;
+        m_Server->iport = port;
+        L_Server->setText(ip);
+        L_ServerPort->setText(QString::number(port));
+    }
+}
+
 void ClientProgram::Add_LogMsg(QString &ip, int &port, QString &GRE)
 {
     QStringList ClassResultList = GRE.split("-");

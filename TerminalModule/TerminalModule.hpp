@@ -4,6 +4,7 @@
 #include <iostream>
 #include <Python.h>
 #include <QApplication>
+#include <QTime>  
 #include <mutex>
 
 #include <TerminalNetwork.hpp>
@@ -45,8 +46,11 @@ private:
             this,SLOT(TAKEPICTURE()));
         connect(Signal::get_instance(),SIGNAL(ImageRecognitionResult(QString, int, QString)),
             this,SLOT(IMAGERECOGNITIONRESULT(QString, int, QString)));
-        connect(Signal::get_instance(),SIGNAL(GetTerminalState(QString)),
-            this,SLOT(GETTERMINALSTATE(QString))); 
+        connect(Signal::get_instance(),SIGNAL(GetTerminalState(QString, int)),
+            this,SLOT(GETTERMINALSTATE(QString, int)));
+        connect(Signal::get_instance(),SIGNAL(RequestStatus(QString, int)),
+            this,SLOT(REQUESTSTATUS(QString, int)));
+         
     };
 
 private slots:
@@ -83,9 +87,92 @@ private slots:
         std::cout << GRE.toStdString() << std::endl; 
     };
 
-    void GETTERMINALSTATE(QString GRE){};
+    void REQUESTSTATUS(QString ip, int port)
+    {
+        using namespace std;
+        QString Status;
+        string buffer;  
+        ifstream in("TERMINALSTATE.ini");  
+        if (!in.is_open())  
+        { 
+            LogService::addLog(std::string("Error opening file"));
+            return; 
+        }  
+        getline(in,buffer,'\n');
+        while (!in.eof())  
+        {  
+            QString qstrKeyword = QString::fromStdString(string(buffer));
+            Status = Status + "\n" + qstrKeyword;
+            getline(in,buffer,'\n');
+        }
+        LogService::addLog(std::string("get TERMINALSTATE from ini file success"));
+        LogService::addLog(std::string("TERMINALSTATE Update Now"));
 
+        QTime time;  
+        time= QTime::currentTime();  
+        qsrand(time.msec()+time.second()*1000);  
+        string LoaclIp;
+        GetLocalIP(LoaclIp);
 
+        QString strip = QString::fromStdString(LoaclIp);
+        int iport = port;
+        QString strServerIp = ip;
+        int ElectricQuantity = qrand() % 100;    //产生100以内的随机数作为电量
+        QString SupportedBusinessTypes = Status;
+
+        QString Keyword = "AddClientStatus ";
+        QString GRE = strip + "-" + 
+                        QString::number(port) + "-" + 
+                        strServerIp + "-" +
+                        QString::number(ElectricQuantity) + "-" + 
+                        SupportedBusinessTypes;
+        QString msg = Keyword + GRE;
+        udpClient::SendMsg(msg.toStdString(), ip.toStdString(), port);
+    };
+
+    void GETTERMINALSTATE(QString ip, int port)
+    {
+        using namespace std;
+        QString Status;
+        string buffer;  
+        ifstream in("TERMINALSTATE.ini");  
+        if (!in.is_open())  
+        { 
+            LogService::addLog(std::string("Error opening file"));
+            return; 
+        }  
+        getline(in,buffer,'\n');
+        while (!in.eof())  
+        {  
+            QString qstrKeyword = QString::fromStdString(string(buffer));
+            Status = Status + "\n" + qstrKeyword;
+            getline(in,buffer,'\n');
+        }
+        LogService::addLog(std::string("get TERMINALSTATE from ini file success"));
+        LogService::addLog(std::string("TERMINALSTATE Update Now"));
+
+        QTime time;  
+        time= QTime::currentTime();  
+        qsrand(time.msec()+time.second()*1000);  
+        string LoaclIp;
+        GetLocalIP(LoaclIp);
+
+        QString strip = QString::fromStdString(LoaclIp);
+        int iport = port;
+        QString strServerIp = ip;
+        int ElectricQuantity = qrand() % 100;    //产生100以内的随机数作为电量
+        QString SupportedBusinessTypes = Status;
+
+        QString Keyword = "GetClientStatus ";
+        QString GRE = strip + "-" + 
+                        QString::number(port) + "-" + 
+                        strServerIp + "-" +
+                        QString::number(ElectricQuantity) + "-" + 
+                        SupportedBusinessTypes;
+        QString msg = Keyword + GRE;
+        udpClient::SendMsg(msg.toStdString(), ip.toStdString(), port);
+
+    };
 
 };
 

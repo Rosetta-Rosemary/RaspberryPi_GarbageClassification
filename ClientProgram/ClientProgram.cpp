@@ -20,7 +20,6 @@ int main(int argc, char *argv[])
     Network::get_instance()->AddServer(strip, 26602);
 
     ClientQuickStart *w = ClientQuickStart::get_instance();
-
     
     return a.exec();
 }

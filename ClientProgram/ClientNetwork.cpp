@@ -36,10 +36,10 @@ void Network::SearchServer()
     std::string strBoardcastiP = Network::getBoardcastAddress();
     std::string LoaclIp;
     GetLocalIP(LoaclIp);
-    while(!bConnectServer)
+    udpClient::SendMsg(std::string("AddClient ")+ LoaclIp,strBoardcastiP,26602);
+    if (!bConnectServer)
     {
-        udpClient::SendMsg(std::string("AddClient ")+ LoaclIp,strBoardcastiP,26602);
-        staticSleep(5000);
+        // udpClient::SendMsg(std::string("AddClient ")+ LoaclIp,strBoardcastiP,26603);
         if (!vectServer.empty())
         {
             std::vector<ServerAddress>::iterator iter = vectServer.begin();
@@ -97,6 +97,13 @@ void Network::EXIT()
 
 void Network::ADD_CLIENT(QString ip, int port, QString GRE)
 {
+    std::string LoaclIp;
+    GetLocalIP(LoaclIp);
+    QString loacl = QString::fromStdString(LoaclIp);
+    if (loacl == GRE)
+    {
+        return;
+    }
     {
         QString str = "Add Client Address : " + GRE + ":" + QString::number(port);
         LogService::addLog(str);
@@ -117,7 +124,7 @@ void Network::ADD_CLIENT(QString ip, int port, QString GRE)
     {
         vectClient.push_back(addClient);
         {
-            udpClient::SendMsg(std::string("AddServer"),GRE.toStdString(),port);
+            udpClient::SendMsg(std::string("AddServer") + LoaclIp,GRE.toStdString(),port);
         }
     }
     else
@@ -148,6 +155,13 @@ void Network::DELETE_CLIENT(QString ip, int port)
 
 void Network::ADD_SERVER(QString ip, int port, QString GRE)
 {
+    std::string LoaclIp;
+    GetLocalIP(LoaclIp);
+    QString loacl = QString::fromStdString(LoaclIp);
+    if (loacl == GRE)
+    {
+        return;
+    }
     {
         QString str = "Add Server Address : " + GRE + ":" + QString::number(port);
         LogService::addLog(str);
@@ -168,7 +182,7 @@ void Network::ADD_SERVER(QString ip, int port, QString GRE)
     {
         vectServer.push_back(addServer);
         {
-            udpClient::SendMsg(std::string("AddClient"),GRE.toStdString(),port);
+            udpClient::SendMsg(std::string("AddClient ") + LoaclIp,GRE.toStdString(),port);
         }
     }
     else
@@ -335,12 +349,10 @@ void udpClient::SendMsg(std::string msg, std::string ip, int port)
     client->send(strmsg,qAdrIp,qPort);
 }
 
-
 void udpClient::send(std::string &msg ,QHostAddress ip, quint16 port)
 {
     sendUdpMsg(msg,ip,port);
 }
-
 
 void udpClient::sendUdpMsg(std::string &msg ,QHostAddress ip, quint16 port)
 {

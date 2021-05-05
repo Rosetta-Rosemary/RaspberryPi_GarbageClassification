@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     KeywordAnalsysTaskMgr *pKeywordAnalsysTaskMgr = KeywordAnalsysTaskMgr::get_instance();
     pKeywordAnalsysTaskMgr->start();
 
-    // ImageRecognitionMgr *pImageRecognitionMgr = ImageRecognitionMgr::get_instance();
+    ImageRecognitionMgr *pImageRecognitionMgr = ImageRecognitionMgr::get_instance();
     // pImageRecognitionMgr->start();
 
     string strip;
@@ -32,19 +32,25 @@ int main(int argc, char *argv[])
     string str = "Local Ip is [ " + strip + "]";
     LogService::addLog(QString::fromStdString(str));
 
-    Network::get_instance()->AddServer("127.0.0.1", 26601);
+    Network *WORK = Network::get_instance();
     Network::get_instance()->AddServer(strip, 26602);
-    
+
+    ClientProgram *w = ClientProgram::get_instance();
+    TerminalModule *pTerminalModule = TerminalModule::get_instance();
     
     LogService::addLog(QString("THIS IS PISERVER"));
 
+    emit(Signal::get_instance()->AddClient(QString("127.0.0.1"),26601,
+        QString("127.0.0.1")));
+    staticSleep(10);
+    emit(Signal::get_instance()->AddClientStatus(QString("127.0.0.1"),26601,
+        QString("127.0.0.1-26601-0.0.0.0-100%-可回收垃圾\n厨余垃圾\n有害垃圾")));
+    emit(Signal::get_instance()->AddLogMsg(QString("127.0.0.1"),26601,
+        QString("易拉罐-可回收垃圾")));
+
     printf("This is main\n");
     return a.exec();
-
-    staticSleep(2500);
 }
-
-
 
 /*
 int main()
