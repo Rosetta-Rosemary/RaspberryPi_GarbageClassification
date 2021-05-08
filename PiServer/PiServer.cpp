@@ -1,12 +1,5 @@
 #include <PiServer.h>
 
-
-void hello()
-{
-    using namespace std;
-    cout << "hello" << endl;
-}
-
 int main(int argc, char *argv[])
 {
     using namespace std;
@@ -45,8 +38,6 @@ int main(int argc, char *argv[])
     staticSleep(10);
     emit(Signal::get_instance()->AddClientStatus(QString("127.0.0.1"),26601,
         QString("127.0.0.1-26601-0.0.0.0-100%-可回收垃圾\n厨余垃圾\n有害垃圾")));
-    emit(Signal::get_instance()->AddLogMsg(QString("127.0.0.1"),26601,
-        QString("易拉罐-可回收垃圾")));
 
     printf("This is main\n");
     return a.exec();

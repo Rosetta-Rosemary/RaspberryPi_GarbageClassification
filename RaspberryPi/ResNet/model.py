@@ -1,6 +1,5 @@
 from tensorflow.keras import layers, Model, Sequential
 
-
 class BasicBlock(layers.Layer):
     expansion = 1
 
@@ -34,19 +33,8 @@ class BasicBlock(layers.Layer):
         x = self.relu(x)
 
         return x
-    '''
-    def get_config(self):
-        config = super(Bottleneck, self).get_config()
-        config.update({"out_channel": self.out_channel, "strides":self.strides , "downsample":self.downsample})
-        return config
-    '''
+
 class Bottleneck(layers.Layer):
-    """
-    注意：原论文中，在虚线残差结构的主分支上，第一个1x1卷积层的步距是2，第二个3x3卷积层步距是1。
-    但在pytorch官方实现过程中是第一个1x1卷积层的步距是1，第二个3x3卷积层步距是2，
-    这么做的好处是能够在top1上提升大概0.5%的准确率。
-    可参考Resnet v1.5 https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch
-    """
     expansion = 4
 
     def __init__(self, out_channel, strides=1, downsample=None, **kwargs):
@@ -85,13 +73,6 @@ class Bottleneck(layers.Layer):
         x = self.relu(x)
 
         return x
-    
-    '''
-    def get_config(self):
-        config = super(Bottleneck, self).get_config()
-        config.update({"out_channel": self.out_channel, "strides":self.strides , "downsample":self.downsample})
-        return config
-    '''
 
 def _make_layer(block, in_channel, channel, block_num, name, strides=1):
     downsample = None
@@ -109,7 +90,6 @@ def _make_layer(block, in_channel, channel, block_num, name, strides=1):
         layers_list.append(block(channel, name="unit_" + str(index + 1)))
 
     return Sequential(layers_list, name=name)
-
 
 def _resnet(block, blocks_num, im_width=224, im_height=224, num_classes=1000, include_top=True):
     # tensorflow中的tensor通道排序是NHWC
@@ -137,14 +117,11 @@ def _resnet(block, blocks_num, im_width=224, im_height=224, num_classes=1000, in
 
     return model
 
-
 def resnet34(im_width=224, im_height=224, num_classes=1000, include_top=True):
     return _resnet(BasicBlock, [3, 4, 6, 3], im_width, im_height, num_classes, include_top)
 
-
 def resnet50(im_width=224, im_height=224, num_classes=1000, include_top=True):
     return _resnet(Bottleneck, [3, 4, 6, 3], im_width, im_height, num_classes, include_top)
-
 
 def resnet101(im_width=224, im_height=224, num_classes=1000, include_top=True):
     return _resnet(Bottleneck, [3, 4, 23, 3], im_width, im_height, num_classes, include_top)

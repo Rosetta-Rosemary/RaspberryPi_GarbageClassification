@@ -25,9 +25,9 @@ void ClientTarget::SetClietStatus(const QString GRE)
     QStringList ClassResultList = GRE.split("-");
     QString ip = ClassResultList.at(0);
     QString port = ClassResultList.at(1);
-    QString ServerIp = ClassResultList.at(1);
-    QString ElectricQuantity = ClassResultList.at(1);
-    QString SupportedBusinessTypes = ClassResultList.at(1);
+    QString ServerIp = ClassResultList.at(2);
+    QString ElectricQuantity = ClassResultList.at(3);
+    QString SupportedBusinessTypes = ClassResultList.at(4);
 
     this->strip = ip;
     this->iPort = port.toInt(); 
