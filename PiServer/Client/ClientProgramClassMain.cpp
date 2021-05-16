@@ -50,6 +50,7 @@ void ClientProgram::Add_LogMsg(QString &ip, int &port, QString &GRE)
 void ClientProgram::Add_ClientStatus(QString &ip, int &port, QString &GRE)
 {
     // GRE = "127.0.0.1-26601-服务器地址-电量-支持垃圾的处理类型"
+    LogService::addLog(QString("ClientProgram::Add_ClientStatus ") + GRE);
     std::vector<ClientTarget*>::iterator iter = Network::get_instance()->vectClient.begin();
     QWidget *Target;
     QPushButton *Target_PB;
@@ -67,22 +68,16 @@ void ClientProgram::Add_ClientStatus(QString &ip, int &port, QString &GRE)
     QString qstrip = ClassResultList.at(0);
     QString qstrPort = ClassResultList.at(1);
 
-    QStringList ipList = qstrip.split(".");
-    qstrip = ipList.at(2) + "." + ipList.at(3);
+    // QStringList ipList = qstrip.split(".");
+    // qstrip = ipList.at(2) + "." + ipList.at(3);
 
     QString strTag = qstrip + "\n" + qstrPort;
+
     Target_PB->setText(strTag);
     Target->show();
 
-    Target = nullptr;
-    for (iter = Network::get_instance()->vectClient.begin();
-         iter != Network::get_instance()->vectClient.end();
-         iter++)
-    {
-        bool add = true;
-        ClientTarget *temp = *iter;
-        this->Move_ClientStatus_GUI(temp->W_ClientStatus_PB, add);
-    }
+    bool add = true;
+    this->Move_ClientStatus_GUI(add);
     connect(Target_PB,SIGNAL(clicked()),this,SLOT(slot_ClientStatus_ShowAndHide()));
     connect(Target_PB,SIGNAL(clicked()),this,SLOT(slot_Client_Hide()));
     connect(Target_PB,SIGNAL(clicked()),this,SLOT(slot_ClientStatus_Show()));
@@ -116,7 +111,7 @@ void ClientProgram::Delete_ClientStatus(QString &ip, int &port, QString &GRE)
             if(bMove)
             {
                 ClientTarget *temp = *iter;
-                this->Move_ClientStatus_GUI(temp->W_ClientStatus_PB, false);
+                // this->Move_ClientStatus_GUI(false);
             }
             iter++;
         }

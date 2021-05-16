@@ -184,18 +184,19 @@ void ClientProgram::slot_Request_All_ClientStatus() // 刷新数据
 
 void ClientProgram::slot_Request_ClientStatus() // 请求终端的状态数据
 {
+    qDebug() << "[ClientProgram::slot_Request_ClientStatus]\n";
     // 获取终端数据
-    QString Keyword = QString("GetTerminalState ");
     QString ip = ClientStatusLabelTemp->GetIp();
-    QString port = QString::number( ClientStatusLabelTemp->GetPort());
-    QString GRE = Keyword + " " + ip + "-" + port;
+    QString port = QString::number(ClientStatusLabelTemp->GetPort());
+    QString GRE = ip + "-" + port;
     if (ip == QString("127.0.0.1"))
     {
         emit(Signal::get_instance()->GetTerminalState(ip,port.toInt()));
     }
     else
     {
-        Network::SendMsgToServer(GRE);
+        qDebug() << "[slot_Request_ClientStatus][emit] " << ip << " " << port << " " << GRE << "\n";
+        emit(Signal::get_instance()->RequestClientStatus(ip,port.toInt(),GRE));
     }
 }
 
@@ -204,6 +205,7 @@ void ClientProgram::slot_Get_TerminalState(QString GRE)
     // ip = 服务器地址
     // port = 服务器端口 
     // GRE = "终端地址-终端端口-服务器地址-电量-支持垃圾的处理类型"
+    qDebug() << "[slot_Get_TerminalState][Start] " << GRE << "\n";
     QStringList ClientStatusList = GRE.split("-");
     QString qstrip = ClientStatusList.at(0);
     QString qstrPort = ClientStatusList.at(1);
@@ -216,11 +218,12 @@ void ClientProgram::slot_Get_TerminalState(QString GRE)
          iter != Network::get_instance()->vectClient.end();
          iter++)
     {
-        if (((*iter)->GetIp() == qstrip) && ((*iter)->GetPort() == qstrPort))
+        if (((*iter)->strip == qstrip) && ((*iter)->iPort == qstrPort.toInt()))
         {
             (*iter)->SetClietStatus(GRE);
 
-            if (((*iter)->GetIp() == L_Ip->text()) && ((*iter)->GetPort() == L_Port->text()))
+            if (((*iter)->strip == L_Ip->text()) 
+                && (QString::number((*iter)->GetPort()) == L_Port->text()))
             {
                 L_ServerIp->setText(qstrServerIp);
                 L_ElectricQuantity->setText(qstrElectricQuantity);
@@ -235,15 +238,17 @@ void ClientProgram::slot_TakePicture()
 {
     QString Keyword = QString("ClientTakePicture");
     QString ip = ClientStatusLabelTemp->GetIp();
-    QString port = QString::number( ClientStatusLabelTemp->GetPort());
+    QString port = QString::number(ClientStatusLabelTemp->GetPort());
     QString GRE = Keyword + " " + ip + "-" + port;
+    qDebug() << "[slot_TakePicture] " << GRE << "\n";
     int iport = port.toInt();
     if (ip == QString("127.0.0.1"))
     {
-            emit(Signal::get_instance()->TakePicture());
+        emit(Signal::get_instance()->TakePicture());
     }
     else
     {
+        qDebug() << "[slot_TakePicture][emit] " << ip << " " << iport << " " << GRE << "\n";
         emit(Signal::get_instance()->ClientTakePicture(ip,iport,GRE));
     }  
 }

@@ -7,38 +7,43 @@ int main(int argc, char *argv[])
 
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
+    //实例化日志模块，并启动对应的线程
     LogMgrThread *pLogMgrThread = LogMgrThread::get_instance();
     pLogMgrThread->start();
 
+    //实例化消息处理模块、载入静态脚本文件、图像识别结果处理模块
     KeywordAnalsys *pKeywordAnalsys = KeywordAnalsys::get_instacne();
     XmlReader *pXmlReader = XmlReader::get_instance();
     Classify *pClassify = Classify::get_instacne();
 
+    //启动消息处理线程
     KeywordAnalsysTaskMgr *pKeywordAnalsysTaskMgr = KeywordAnalsysTaskMgr::get_instance();
     pKeywordAnalsysTaskMgr->start();
 
+    //实例化图像处理模块
     ImageRecognitionMgr *pImageRecognitionMgr = ImageRecognitionMgr::get_instance();
-    // pImageRecognitionMgr->start();
 
     string strip;
     GetLocalIP(strip);
     string str = "Local Ip is [ " + strip + "]";
     LogService::addLog(QString::fromStdString(str));
 
+    //实例化网络模块
     Network *WORK = Network::get_instance();
     Network::get_instance()->AddServer(strip, 26602);
 
+    //生成前端界面以及启动终端控制部分
     ClientProgram *w = ClientProgram::get_instance();
     TerminalModule *pTerminalModule = TerminalModule::get_instance();
     
     LogService::addLog(QString("THIS IS PISERVER"));
 
+//生成服务器的终端部分对象到前端
     emit(Signal::get_instance()->AddClient(QString("127.0.0.1"),26601,
         QString("127.0.0.1")));
     staticSleep(10);
     emit(Signal::get_instance()->AddClientStatus(QString("127.0.0.1"),26601,
         QString("127.0.0.1-26601-0.0.0.0-100%-可回收垃圾\n厨余垃圾\n有害垃圾")));
-
     printf("This is main\n");
     return a.exec();
 }

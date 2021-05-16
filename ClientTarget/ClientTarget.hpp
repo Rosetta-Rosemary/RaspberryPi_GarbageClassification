@@ -46,12 +46,11 @@ public:
     bool IsIpAndPortSame(QString ip, int port);
 
     QWidget *W_ClientStatus_PB;
+    QString strip;
+    int iPort; 
 
 private:
     QPushButton *PB_Tag;
-
-    QString strip;
-    int iPort; 
     QString strServerIp;
     QString strElectricQuantity;
     QString strSupportedBusinessTypes;

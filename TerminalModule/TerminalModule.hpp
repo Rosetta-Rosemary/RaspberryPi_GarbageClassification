@@ -58,6 +58,7 @@ private slots:
 
     void TAKEPICTURE()
     {
+        std::cout << "[TAKEPICTURE][emit]\n";
         try
         {  
             mtxPython.lock();
@@ -72,7 +73,6 @@ private slots:
                                 "camera.close()");
             std::cout << "get Image " << std::endl;
             mtxPython.unlock();
-            
         }
         catch(...)
         {
@@ -80,6 +80,7 @@ private slots:
             PyErr_Clear();
             Py_Finalize();
         }
+        
     };
 
     void IMAGERECOGNITIONRESULT(QString ip, int port, QString GRE)
@@ -89,6 +90,7 @@ private slots:
 
     void REQUESTSTATUS(QString ip, int port)
     {
+        std::cout << "[REQUESTSTATUS][emit]\n";
         using namespace std;
         QString Status;
         string buffer;  
@@ -102,7 +104,7 @@ private slots:
         while (!in.eof())  
         {  
             QString qstrKeyword = QString::fromStdString(string(buffer));
-            Status = Status + "\n" + qstrKeyword;
+            Status = Status + qstrKeyword + QString("\\n");
             getline(in,buffer,'\n');
         }
         LogService::addLog(std::string("get TERMINALSTATE from ini file success"));
@@ -122,7 +124,7 @@ private slots:
 
         QString Keyword = "AddClientStatus ";
         QString GRE = strip + "-" + 
-                        QString::number(port) + "-" + 
+                        QString::number(26603) + "-" + 
                         strServerIp + "-" +
                         QString::number(ElectricQuantity) + "-" + 
                         SupportedBusinessTypes;
@@ -133,6 +135,7 @@ private slots:
     void GETTERMINALSTATE(QString ip, int port)
     {
         using namespace std;
+        qDebug() << "[GETTERMINALSTATE][Start] " << ip << " " << port << "\n";
         QString Status;
         string buffer;  
         ifstream in("TERMINALSTATE.ini");  
@@ -145,7 +148,7 @@ private slots:
         while (!in.eof())  
         {  
             QString qstrKeyword = QString::fromStdString(string(buffer));
-            Status = Status + "\n" + qstrKeyword;
+            Status = Status + qstrKeyword + QString("\\n");
             getline(in,buffer,'\n');
         }
         LogService::addLog(std::string("get TERMINALSTATE from ini file success"));
@@ -165,11 +168,12 @@ private slots:
 
         QString Keyword = "GetClientStatus ";
         QString GRE = strip + "-" + 
-                        QString::number(port) + "-" + 
+                        QString::number(26603) + "-" + 
                         strServerIp + "-" +
                         QString::number(ElectricQuantity) + "-" + 
                         SupportedBusinessTypes;
         QString msg = Keyword + GRE;
+        qDebug() << "[GETTERMINALSTATE][Start] " << ip << " " << port << " " << msg <<"\n";
         udpClient::SendMsg(msg.toStdString(), ip.toStdString(), port);
 
     };

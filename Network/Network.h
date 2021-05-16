@@ -75,6 +75,7 @@ public:
     bool bConnectServer;
 
     static void SendMsgToServer(QString msg);
+    void BoardCastAddServer();
 
     std::vector<ClientTarget*> vectClient;
 

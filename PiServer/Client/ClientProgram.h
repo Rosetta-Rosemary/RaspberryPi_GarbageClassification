@@ -89,7 +89,7 @@ private:
     void Add_ClientStatus(QString &ip, int &port, QString &GRE);
     void Add_ClientStatus_GUI(ClientStatus &Label);
     void Delete_ClientStatus(QString &ip, int &port, QString &GRE);
-    void Move_ClientStatus_GUI(QWidget *Label, bool bAdd);
+    void Move_ClientStatus_GUI(bool bAdd);
     void Delete_ClientStatus_GUI(QWidget &Label);
 
 

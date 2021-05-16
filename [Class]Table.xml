@@ -17,7 +17,7 @@
         <Garbage id = '13' Name = '破碎玻璃杯' Class = '可回收垃圾'/>
         <Garbage id = '14' Name = '纸板箱' Class = '可回收垃圾'/>
         <Garbage id = '15' Name = '蛋壳' Class = '厨余垃圾'/>
-        <Garbage id = '16' Name = '软膏' Class = '可回收垃圾'/>
+        <Garbage id = '16' Name = '软膏' Class = '有害垃圾'/>
         <Garbage id = '17' Name = '食用油桶' Class = '可回收垃圾'/>
         <Garbage id = '18' Name = '饮料瓶' Class = '可回收垃圾'/>
         <Garbage id = '19' Name = '鱼骨' Class = '厨余垃圾'/>

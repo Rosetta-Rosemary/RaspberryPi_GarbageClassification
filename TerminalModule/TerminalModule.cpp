@@ -20,12 +20,11 @@ int main(int argc, char *argv[])
     string str = "Local Ip is [ " + strip + "]";
     LogService::addLog(QString::fromStdString(str));
 
-    Network::get_instance()->AddServer(strip, 26602);
+    Network::get_instance()->AddServer(strip, 26603);
 
     TerminalModule *pTerminalModule = TerminalModule::get_instance();
 
-    LogService::addLog(QString("THIS IS PISERVER"));
+    LogService::addLog(QString("THIS IS PI_Terminal"));
     return a.exec();
 
-    staticSleep(2500);
 }

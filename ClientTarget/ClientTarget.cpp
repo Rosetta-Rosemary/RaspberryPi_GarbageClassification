@@ -22,6 +22,8 @@ ClientTarget::ClientTarget(const QString ip, const int port)
 void ClientTarget::SetClietStatus(const QString GRE)
 {
     // GRE = "127.0.0.1-26601-服务器地址-电量-支持垃圾的处理类型"
+    qDebug() << "[SetClietStatus]" << GRE << "\n";
+    qDebug() << "[SetClietStatus][Target]" << this->strip << " " << this->iPort << "\n";
     QStringList ClassResultList = GRE.split("-");
     QString ip = ClassResultList.at(0);
     QString port = ClassResultList.at(1);

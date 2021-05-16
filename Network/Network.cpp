@@ -48,7 +48,7 @@ void Network::TimerRun()
     m_pTimer = new QTimer;
     connect(m_pTimer,SIGNAL(timeout()),
             this,SLOT(TimerOut()));
-    m_pTimer->start(300000);
+    m_pTimer->start(60000);
 }
 
 void Network::TimerOut()
@@ -57,7 +57,18 @@ void Network::TimerOut()
         std::string LoaclIp;
         GetLocalIP(LoaclIp);
         std::string strBoardcastiP = Network::getBoardcastAddress();
-        udpClient::SendMsg(std::string("AddServer ") + LoaclIp,strBoardcastiP,26602);
+        udpClient::SendMsg(std::string("AddServer ") + LoaclIp,strBoardcastiP,26603);
+        LogService::addLog(QString("服务器广播"));
+    }
+}
+
+void Network::BoardCastAddServer()
+{
+    {
+        std::string LoaclIp;
+        GetLocalIP(LoaclIp);
+        std::string strBoardcastiP = Network::getBoardcastAddress();
+        udpClient::SendMsg(std::string("AddServer ") + LoaclIp,strBoardcastiP,26603);
         LogService::addLog(QString("服务器广播"));
     }
 }
@@ -104,11 +115,16 @@ void Network::EXIT()
 void Network::ADD_CLIENT(QString ip, int port, QString GRE)
 {
     // GRE = "127.0.0.1"
+    if (port == 26602)
+    {
+        port = 26603;
+    }
     std::string LoaclIp;
     GetLocalIP(LoaclIp);
     QString loacl = QString::fromStdString(LoaclIp);
-    if (loacl == GRE)
+    if (QString("127.0.0.1") == GRE && port != 26601)
     {
+        LogService::addLog(std::string("Client is Local Client! ADD_CLIENT Faild!"));
         return;
     }
     {
@@ -143,6 +159,8 @@ void Network::ADD_CLIENT(QString ip, int port, QString GRE)
 
 void Network::DELETE_CLIENT(QString ip, int port)
 {
+    if (port == 26602)
+        port = 26603;
     ClientTarget *deleteClient = new ClientTarget(ip,port);
     for(auto iter = vectClient.begin();
         iter != vectClient.end(); iter++)
@@ -233,10 +251,15 @@ void Network::RETURN_RESULT(QString ip, int port, QString GRE)
 void Network::ClientTakePicture(QString ip, int port, QString GRE)
 {
     // GRE = "127.0.0.1-26601"
-    QStringList ClientList = GRE.split("-");
-    QString qstrip = ClientList.at(0);
-    QString qstrPort = ClientList.at(1);
+    qDebug() << "[Network::ClientTakePicture] " << ip << " " 
+            << port << " " << GRE << "\n";
+    QStringList ClientList = GRE.split(" ");
+    QStringList GREList = ClientList.at(1).split("-");
+
+    QString qstrip = GREList.at(0);
+    QString qstrPort = GREList.at(1);
     QString Keyword = QString("TakePicture");
+    qDebug() << "[Network::ClientTakePicture]" << qstrip << " " << qstrPort << " " << Keyword << "\n";
     udpClient::SendMsg(Keyword.toStdString(), qstrip.toStdString(), qstrPort.toInt());
 }
 
@@ -278,7 +301,7 @@ void Network::ReturnClientStatus(QString ip, int port, QString GRE)
                         "-" + qstrServerIp + 
                         "-" + qstrElectricQuantity+
                         "-" + qstrSupportedBusinessTypes;
-    emit(Signal::get_instance()->AddLogMsg(ip,port,GRE));
+    // emit(Signal::get_instance()->AddLogMsg(ip,port,GRE));
     
     // ip = 客户端地址
     // port = 客户端端口 

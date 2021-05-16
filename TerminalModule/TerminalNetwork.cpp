@@ -134,8 +134,9 @@ void Network::ADD_SERVER(QString ip, int port, QString GRE)
     std::string LoaclIp;
     GetLocalIP(LoaclIp);
     QString loacl = QString::fromStdString(LoaclIp);
-    if (loacl == GRE)
+    if (QString("127.0.0.1") == GRE)
     {
+        LogService::addLog(std::string("Server is Local Server! ADD_SERVER Faild!"));
         return;
     }
     {
@@ -274,6 +275,7 @@ void udpServer::getMsg()
         std::string str = "[" + ss.str() + "]";
         str += clientIp.toString().toStdString() + "::" + std::to_string((int)iport) + " ";
         str = str + "Message is : " +  strGetMsg;
+        std::cout << str << std::endl;
         LogService::get_instance()->setLog(str);
     }
     emit(getMsgSuccess(QString::fromStdString(strGetMsg)));
@@ -307,22 +309,26 @@ void udpClient::SendMsg(std::string msg, std::string ip, int port)
     GetLocalIP(LoaclIp);
     udpClient *client = new udpClient;
     QHostAddress qAdrIp = Network::StdString2QHostAddress(ip);
-    quint16 qPort = Network::int2quint16(port);
-    std::string strmsg = LoaclIp + " " + std::to_string(port) + " " + msg;
+
+    //终端控制器统一使用26603端口接受消息
+    //并将消息发送到服务器的26602端口
+    quint16 qPort = 26602;
+    std::string strmsg = LoaclIp + " " + std::to_string(26603) + " " + msg;
+    LogService::addLog(QString::fromStdString(strmsg));
+    std::cout << "[udpClient::SendMsg] " << ip << " " << port << " " << strmsg << "\n";
     client->send(strmsg,qAdrIp,qPort);
 }
-
 
 void udpClient::send(std::string &msg ,QHostAddress ip, quint16 port)
 {
     sendUdpMsg(msg,ip,port);
 }
 
-
 void udpClient::sendUdpMsg(std::string &msg ,QHostAddress ip, quint16 port)
 {
     QUdpSocket udpsocket;
     QString str = QString::fromStdString(msg);
+    qDebug() << "[udpClient::sendUdpMsg]" << ip << " " << port << " " << str << "\n";
     udpsocket.writeDatagram(str.toUtf8(),512,ip,port);
 }
 

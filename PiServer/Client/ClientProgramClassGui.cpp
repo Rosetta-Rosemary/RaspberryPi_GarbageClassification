@@ -239,34 +239,37 @@ void ClientProgram::Add_ClientStatus_GUI(ClientStatus &Label)
 
 }
 
-void ClientProgram::Move_ClientStatus_GUI(QWidget *Label, bool bAdd)
+void ClientProgram::Move_ClientStatus_GUI(bool bAdd)
 {
-    if (bAdd)
+    std::vector<ClientTarget*>::iterator iter;
+    QParallelAnimationGroup *m_group = new QParallelAnimationGroup(this);
+    QPropertyAnimation *pPosAnimation;
+    for (iter = Network::get_instance()->vectClient.begin();
+         iter != Network::get_instance()->vectClient.end();
+         iter++)
     {
-        QPropertyAnimation *pPosAnimation = new QPropertyAnimation(Label, "pos");
-        pPosAnimation->setDuration(200);
-        pPosAnimation->setStartValue(QPoint(Label->x(), Label->y()));
-        pPosAnimation->setEndValue(QPoint(Label->x(), Label->y()+50));
-        pPosAnimation->setEasingCurve(QEasingCurve::InOutQuad);
-        QParallelAnimationGroup *m_group = new QParallelAnimationGroup(this);
-        m_group->addAnimation(pPosAnimation);
-        m_group->setDirection(QAbstractAnimation::Forward);
-        m_group->setLoopCount(1);
-        m_group->start();
-    }   
-    else
-    {
-        QPropertyAnimation *pPosAnimation = new QPropertyAnimation(Label, "pos");
-        pPosAnimation->setDuration(200);
-        pPosAnimation->setStartValue(QPoint(Label->x(), Label->y()));
-        pPosAnimation->setEndValue(QPoint(Label->x(), Label->y()-50));
-        pPosAnimation->setEasingCurve(QEasingCurve::InOutQuad);
-        QParallelAnimationGroup *m_group = new QParallelAnimationGroup(this);
-        m_group->addAnimation(pPosAnimation);
-        m_group->setDirection(QAbstractAnimation::Forward);
-        m_group->setLoopCount(1);
-        m_group->start();
+        std::cout << *iter << std::endl;
+        pPosAnimation = new QPropertyAnimation((*iter)->W_ClientStatus_PB, "pos");
+        if (bAdd)
+        {
+            pPosAnimation->setDuration(200);
+            pPosAnimation->setStartValue(QPoint((*iter)->W_ClientStatus_PB->x(), (*iter)->W_ClientStatus_PB->y()));
+            pPosAnimation->setEndValue(QPoint((*iter)->W_ClientStatus_PB->x(), (*iter)->W_ClientStatus_PB->y()+50));
+            pPosAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+            m_group->addAnimation(pPosAnimation);
+        }
+        else
+        {
+            pPosAnimation->setDuration(200);
+            pPosAnimation->setStartValue(QPoint((*iter)->W_ClientStatus_PB->x(), (*iter)->W_ClientStatus_PB->y()));
+            pPosAnimation->setEndValue(QPoint((*iter)->W_ClientStatus_PB->x(), (*iter)->W_ClientStatus_PB->y()-50));
+            pPosAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+            m_group->addAnimation(pPosAnimation);
+        }
     }
+    m_group->setDirection(QAbstractAnimation::Forward);
+    m_group->setLoopCount(1);
+    m_group->start();
 }
 
 void ClientProgram::Delete_ClientStatus_GUI(QWidget &Label)
