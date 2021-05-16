@@ -5,15 +5,36 @@ import tensorflow as tf
 import json
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+Devices = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = Devices
 
-gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
-cpus = tf.config.experimental.list_physical_devices(device_type='CPU')
-print(gpus, cpus)
-tf.config.experimental.set_virtual_device_configuration(
-    gpus[0],
-    [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=4096)]
-)
+if Devices == "0":
+    gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
+    cpus = tf.config.experimental.list_physical_devices(device_type='CPU')
+    print(gpus, cpus)
+    tf.config.experimental.set_virtual_device_configuration(
+        gpus[0],
+        [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=4096)]
+    )
+
+def showTable(history):
+    import matplotlib.pyplot as plt
+    loss = history.history['loss']
+    acc =  history.history['acc']
+    val_loss = history.history['val_acc']
+    val_acc = history.history['val_acc']
+    epochs = range(len(acc))
+    plt.plot(epochs,acc,'r',label='Training accuracy')
+    plt.plot(epochs,val_acc,'b',label='Validation accuracy')
+    plt.legend(loc=0)
+    plt.title("Training and Validation accuracy")
+    plt.figure()
+    plt.plot(epochs,loss,'r',label='Training loss')
+    plt.plot(epochs,val_loss,'b',label='Validation loss')
+    plt.legend(loc=0)
+    plt.title("Training and validation loss")
+    plt.show()
+
 
 def main():
     data_root = os.path.abspath(os.path.join(os.getcwd(), "../"))  # get data root path
@@ -67,7 +88,7 @@ def main():
     model.summary()
 
     '''
-    weights_path = "./save_weights/myVGG.h5"
+    weights_path = "./save_weights/VGG.h5"
     assert os.path.exists(weights_path), "file: '{}' dose not exist.".format(weights_path)
     model.load_weights(weights_path)
     '''
@@ -76,36 +97,30 @@ def main():
                   loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False),
                   metrics=["accuracy"])
 
+    callback_list = [
+        callbacks.ReduceLROnPlateau(
+            monitor='val_loss',
+            factor=0.1,
+            patience=3,
+            verbose=1,
+        ),
+        callbacks.ModelCheckpoint(
+            filepath='./save_weights/VGG.h5',
+            monitor='val_acc',
+            save_best_only=True,
+            save_weights_only=True, 
+            verbose=1
+        )
+    ]
 
-    callbacks = [tf.keras.callbacks.ModelCheckpoint(filepath='./save_weights/myVGG.h5',
-                                                    save_best_only=True,
-                                                    save_weights_only=True,
-                                                    monitor='val_loss')]
-
-    # tensorflow2.1 recommend to using fit
     history = model.fit(x=train_data_gen,
                         steps_per_epoch=total_train // batch_size,
                         epochs=epochs,
                         validation_data=val_data_gen,
                         validation_steps=total_val // batch_size,
-                        callbacks=callbacks)
+                        callbacks=callback_list)
 
-    import matplotlib.pyplot as plt
-    loss = history.history['loss']
-    acc =  history.history['accuracy']
-    val_loss = history.history['val_loss']
-    val_acc = history.history['val_accuracy']
-    epochs = range(len(acc))
-    plt.plot(epochs,acc,'r',label='Training accuracy')
-    plt.plot(epochs,val_acc,'b',label='Validation accuracy')
-    plt.legend(loc=0)
-    plt.title("Training and Validation accuracy")
-    plt.figure()
-    plt.plot(epochs,loss,'r',label='Training loss')
-    plt.plot(epochs,val_loss,'b',label='Validation loss')
-    plt.legend(loc=0)
-    plt.title("Training and validation loss")
-    plt.show()
+    showTable(history)
 
 if __name__ == '__main__':
     main()

@@ -12,8 +12,8 @@ from model import resnet50
 
 
 Devices = "0"
-os.environ["CUDA_VISIBLE_DEVICES"]=Devices
-
+os.environ["CUDA_VISIBLE_DEVICES"] = Devices
+ 
 if Devices == "0":
     gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
     cpus = tf.config.experimental.list_physical_devices(device_type='CPU')

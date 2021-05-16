@@ -4,6 +4,7 @@ import json
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 
 from model import vgg
 
@@ -14,7 +15,7 @@ def main():
     num_classes = 5
 
     # load image
-    img_path = "../tulip.jpg"
+    img_path = "./Image.jpg"
     assert os.path.exists(img_path), "file: '{}' dose not exist.".format(img_path)
     img = Image.open(img_path)
     # resize image to 224x224
@@ -36,7 +37,7 @@ def main():
 
     # create model
     model = vgg("vgg16", im_height=im_height, im_width=im_width, num_classes=num_classes)
-    weights_path = "./save_weights/myVGG.h5"
+    weights_path = "./save_weights/VGG.h5"
     assert os.path.exists(img_path), "file: '{}' dose not exist.".format(weights_path)
     model.load_weights(weights_path)
 
@@ -46,6 +47,8 @@ def main():
 
     print_res = "class: {}   prob: {:.3}".format(class_indict[str(predict_class)],
                                                  result[predict_class])
+
+    matplotlib.rcParams['font.family']='STSong'#修改了全局变量                                          
     plt.title(print_res)
     print(print_res)
     plt.show()

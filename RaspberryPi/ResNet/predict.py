@@ -6,6 +6,7 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
+import matplotlib
 
 from model import resnet50
 
@@ -59,7 +60,7 @@ def main():
     # prediction
     result = np.squeeze(model.predict(img))
     predict_class = np.argmax(result)
-
+    matplotlib.rcParams['font.family']='STSong'#修改了全局变量
     print_res = "class: {}   prob: {:.3}".format(class_indict[str(predict_class)],
                                                  result[predict_class])
     plt.title(print_res)
