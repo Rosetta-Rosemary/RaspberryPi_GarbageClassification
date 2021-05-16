@@ -184,7 +184,7 @@ void ClientProgram::slot_Request_All_ClientStatus() // 刷新数据
 
 void ClientProgram::slot_Request_ClientStatus() // 请求终端的状态数据
 {
-    qDebug() << "[ClientProgram::slot_Request_ClientStatus]\n";
+    qDebug() << "[ClientProgram::slot_Request_ClientStatus]";
     // 获取终端数据
     QString ip = ClientStatusLabelTemp->GetIp();
     QString port = QString::number(ClientStatusLabelTemp->GetPort());
@@ -195,7 +195,7 @@ void ClientProgram::slot_Request_ClientStatus() // 请求终端的状态数据
     }
     else
     {
-        qDebug() << "[slot_Request_ClientStatus][emit] " << ip << " " << port << " " << GRE << "\n";
+        qDebug() << "[slot_Request_ClientStatus][emit] " << ip << " " << port << " " << GRE ;
         emit(Signal::get_instance()->RequestClientStatus(ip,port.toInt(),GRE));
     }
 }
@@ -205,7 +205,7 @@ void ClientProgram::slot_Get_TerminalState(QString GRE)
     // ip = 服务器地址
     // port = 服务器端口 
     // GRE = "终端地址-终端端口-服务器地址-电量-支持垃圾的处理类型"
-    qDebug() << "[slot_Get_TerminalState][Start] " << GRE << "\n";
+    qDebug() << "[slot_Get_TerminalState][Start] " << GRE;
     QStringList ClientStatusList = GRE.split("-");
     QString qstrip = ClientStatusList.at(0);
     QString qstrPort = ClientStatusList.at(1);
@@ -240,7 +240,7 @@ void ClientProgram::slot_TakePicture()
     QString ip = ClientStatusLabelTemp->GetIp();
     QString port = QString::number(ClientStatusLabelTemp->GetPort());
     QString GRE = Keyword + " " + ip + "-" + port;
-    qDebug() << "[slot_TakePicture] " << GRE << "\n";
+    qDebug() << "[slot_TakePicture] " << GRE;
     int iport = port.toInt();
     if (ip == QString("127.0.0.1"))
     {
@@ -248,7 +248,7 @@ void ClientProgram::slot_TakePicture()
     }
     else
     {
-        qDebug() << "[slot_TakePicture][emit] " << ip << " " << iport << " " << GRE << "\n";
+        qDebug() << "[slot_TakePicture][emit] " << ip << " " << iport << " " << GRE;
         emit(Signal::get_instance()->ClientTakePicture(ip,iport,GRE));
     }  
 }

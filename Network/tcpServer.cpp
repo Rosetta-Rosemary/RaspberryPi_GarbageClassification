@@ -26,7 +26,7 @@ tcpServer::tcpServer(quint16 port)
 bool tcpServer::Init()
 {
     connect(&m_tcpServer,&QTcpServer::newConnection,this,&tcpServer::newListen);
-        m_tcpServer.listen(QHostAddress::Any,m_qport);
+        m_tcpServer.listen(QHostAddress::AnyIPv4,m_qport);
     connect(this,SIGNAL(getMsgSuccess(QString)),
             KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(QString)));
     connect(this,SIGNAL(getFileSuccess(QString)),
@@ -56,7 +56,7 @@ void tcpServer::newListen()
 {
     QTcpSocket *msocket = m_tcpServer.nextPendingConnection();
     connect(msocket, &QTcpSocket::readyRead, this, &tcpServer::RecvFileData);
-
+    qDebug() << "[TcpServer::newListen]";
     filesize = 0;
     recvsize = 0;
 }
@@ -71,11 +71,11 @@ void tcpServer::SendFileClient()
 
 void tcpServer::RecvFileData()
 {
-    QHostAddress ip;
-    quint16 port;
     //获取连接客户端的连接者
     QTcpSocket *msocket=dynamic_cast<QTcpSocket *>(sender());
     QString qFilename;
+    QString ip = msocket->peerAddress().toString();
+    qint16 port = msocket->peerPort();
     //表示读取一个数据，读取文件头信息，将客户端的文件头信息获取到自己的file里面
     if(filesize == 0)
     {
@@ -89,7 +89,7 @@ void tcpServer::RecvFileData()
         //创建路径
         QString dir=".";
         //文件保存路径
-        QString filenames = dir + "/" + filename;
+        QString filenames = dir + "/" + ip + "_26603_" + filename;
         qFilename = filenames;
         //打开文件
         file.setFileName(filenames);
@@ -109,13 +109,12 @@ void tcpServer::RecvFileData()
     {
         //关闭文件
         file.close();
-        QString ip = msocket->peerAddress().toString();
-        qint16 port = msocket->peerPort();
+        
         //关闭套接字
         msocket->disconnectFromHost();
         QString qPort = QString::number(port);
-        QString qstrMsg = ip + " " + qPort + " ImageRecognitionTask " + qFilename;
- 
+        QString qstrMsg = ip + " " + QString::number(26603) + " ImageRecognitionTask " + qFilename;
+        qDebug() << "[tcpServer::RecvFileData]" << qstrMsg;
         emit(getFileSuccess(qstrMsg));
     }
 }

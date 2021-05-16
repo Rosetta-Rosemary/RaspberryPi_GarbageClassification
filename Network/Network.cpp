@@ -252,14 +252,14 @@ void Network::ClientTakePicture(QString ip, int port, QString GRE)
 {
     // GRE = "127.0.0.1-26601"
     qDebug() << "[Network::ClientTakePicture] " << ip << " " 
-            << port << " " << GRE << "\n";
+            << port << " " << GRE;
     QStringList ClientList = GRE.split(" ");
     QStringList GREList = ClientList.at(1).split("-");
 
     QString qstrip = GREList.at(0);
     QString qstrPort = GREList.at(1);
     QString Keyword = QString("TakePicture");
-    qDebug() << "[Network::ClientTakePicture]" << qstrip << " " << qstrPort << " " << Keyword << "\n";
+    qDebug() << "[Network::ClientTakePicture]" << qstrip << " " << qstrPort << " " << Keyword;
     udpClient::SendMsg(Keyword.toStdString(), qstrip.toStdString(), qstrPort.toInt());
 }
 

@@ -74,7 +74,7 @@ private slots:
 private:
     ImageRecognitionMgr();
     void run(){this->runImageRecognitionMgr();};
-    void runImageRecognitionMgr();
+    void runImageRecognitionMgr(QString qFileName = "./Image.jpg");
 
 
 protected:

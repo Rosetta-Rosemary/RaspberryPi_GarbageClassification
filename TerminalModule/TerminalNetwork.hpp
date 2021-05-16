@@ -65,9 +65,14 @@ public:
     void AddServer(std::string ip,int port);
     void TcpRecvServer(int port);
 
+    static bool SendImage();
+
     static QHostAddress StdString2QHostAddress(string &ip);
     static quint16 int2quint16(int &iport);
     static std::string getBoardcastAddress();
+
+    std::string ServerIp = "";
+    int ServerPort = 0; 
 
 signals:
 
@@ -141,7 +146,9 @@ public:
     ~tcpServer();
     tcpServer(int iport);
     tcpServer(quint16 port);
-    void ReadyToClient();
+    static void TcpToSend(std::string str,int port);
+
+    void setSocket(QHostAddress ip, quint16 port);
 
 private:
     bool Init();

@@ -50,6 +50,18 @@ void Network::TcpRecvServer(int port)
     vecServerNetwork.push_back(Server);
 }
 
+bool Network::SendImage()
+{
+    Network *work = Network::get_instance();
+    if (work->ServerIp == "" || work->ServerPort == 0)
+    {
+        return false;
+    }
+    tcpServer::TcpToSend(work->ServerIp, work->ServerPort);
+    return true;
+}
+
+
 void Network::EXIT()
 {
     {
@@ -106,7 +118,6 @@ void Network::ADD_CLIENT(QString ip, int port, QString GRE)
     {
 
     }
-
 }
 
 void Network::DELETE_CLIENT(QString ip, int port)
@@ -145,6 +156,8 @@ void Network::ADD_SERVER(QString ip, int port, QString GRE)
     }
     ServerAddress addServer;
     addServer.strip = GRE;
+    this->ServerIp = GRE.toStdString();
+    this->ServerPort = 26602;
     addServer.iport = port;
     vector<ServerAddress>::iterator iter = vectServer.begin();
     bool bFind = false;
@@ -315,7 +328,7 @@ void udpClient::SendMsg(std::string msg, std::string ip, int port)
     quint16 qPort = 26602;
     std::string strmsg = LoaclIp + " " + std::to_string(26603) + " " + msg;
     LogService::addLog(QString::fromStdString(strmsg));
-    std::cout << "[udpClient::SendMsg] " << ip << " " << port << " " << strmsg << "\n";
+    std::cout << "[udpClient::SendMsg] " << ip << " " << port << " " << strmsg;
     client->send(strmsg,qAdrIp,qPort);
 }
 
@@ -328,13 +341,12 @@ void udpClient::sendUdpMsg(std::string &msg ,QHostAddress ip, quint16 port)
 {
     QUdpSocket udpsocket;
     QString str = QString::fromStdString(msg);
-    qDebug() << "[udpClient::sendUdpMsg]" << ip << " " << port << " " << str << "\n";
+    qDebug() << "[udpClient::sendUdpMsg]" << ip << " " << port << " " << str;
     udpsocket.writeDatagram(str.toUtf8(),512,ip,port);
 }
 
 tcpServer::tcpServer()
 {
-    Init();
     SendInit();
 }
 
@@ -355,14 +367,32 @@ tcpServer::tcpServer(quint16 port)
     Init();
 }
 
+void tcpServer::TcpToSend(string strIp,int iport)
+{
+    // std::unique_ptr<tcpServer> pTcp(new tcpServer);
+    tcpServer *pTcp = new tcpServer;
+    QHostAddress ipaddr = Network::StdString2QHostAddress(strIp);
+    quint16 port = Network::int2quint16(iport);
+    pTcp->setSocket(ipaddr, port);
+    emit(pTcp->ReadyToSend());
+}
+
+void tcpServer::setSocket(QHostAddress ip, quint16 port)
+{
+    m_ipaddr = ip;
+    m_qport = port;
+}
+
 bool tcpServer::Init()
 {
     connect(&m_tcpServer,&QTcpServer::newConnection,this,&tcpServer::newListen);
         m_tcpServer.listen(QHostAddress::Any,m_qport);
     connect(this,SIGNAL(getMsgSuccess(QString)),
             KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(QString)));
-    connect(this,SIGNAL(getFileSuccess(QString)),
-            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(QString)));
+    //  connect(this,SIGNAL(getFileSuccess(QString)),
+    //        KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(QString)));
+
+    this->SendInit();
 }
 
 void tcpServer::SendInit()
@@ -370,7 +400,9 @@ void tcpServer::SendInit()
     connect(this, &tcpServer::ReadyToSend, this, &tcpServer::SendFileClient);
     //连接成功以后，需要发送文件的头信息给服务器， connected信号
     connect(&m_tcpSocket, &QTcpSocket::connected, this, &tcpServer::SendFileHead);
+    //connect(&m_tcpSocket,SIGNAL(connected()),this,SLOT(SendFileHead()));
     //发送头数据成功后会发送一个信号bytesWriten
+    //connect(&m_tcpSocket,SIGNAL(QTcpSocket::bytesWritten()),this,SLOT(SendFileText()));
     connect(&m_tcpSocket, &QTcpSocket::bytesWritten, this, &tcpServer::SendFileText);
 }
 
@@ -395,7 +427,9 @@ void tcpServer::newListen()
 
 void tcpServer::SendFileClient()
 {
+    qDebug() << "[SendFileClient]" << m_ipaddr << " " << m_qport << "[End]"; 
     m_tcpSocket.connectToHost(m_ipaddr, m_qport);
+    qDebug()<<"connect";
     //初始化文件信息
     filesize = 0;
     sendsize = 0;
@@ -454,10 +488,11 @@ void tcpServer::RecvFileData()
 
 void tcpServer::SendFileHead()
 {
+    qDebug() << "[SendFileHead]"; 
     //发送文件名以及文件大小
     std::string Localip;
     GetLocalIP(Localip);
-    QString FileName = "./" + QString::fromStdString(Localip) + "-" + "26602-" + "Image.jpeg";
+    QString FileName = "./Image.jpg";
     QFileInfo info(FileName);
     filename =info.fileName();
     filesize =info.size();
@@ -477,6 +512,7 @@ void tcpServer::SendFileHead()
 
 void tcpServer::SendFileText()
 {
+    qDebug() << "[SendFileText]"; 
         //数据发送
     if(sendsize<filesize)
     {

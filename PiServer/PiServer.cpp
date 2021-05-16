@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
     //实例化网络模块
     Network *WORK = Network::get_instance();
     Network::get_instance()->AddServer(strip, 26602);
+    Network::get_instance()->TcpRecvServer(26602);
 
     //生成前端界面以及启动终端控制部分
     ClientProgram *w = ClientProgram::get_instance();

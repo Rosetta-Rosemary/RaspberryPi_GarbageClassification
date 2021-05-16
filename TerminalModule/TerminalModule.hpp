@@ -80,7 +80,14 @@ private slots:
             PyErr_Clear();
             Py_Finalize();
         }
-        
+        if(Network::SendImage())
+        {
+            qDebug() << "[TAKEPICTURE]Send Image";
+        }
+        else
+        {
+            qDebug() << "[TAKEPICTURE]Send Image Failed!";
+        }
     };
 
     void IMAGERECOGNITIONRESULT(QString ip, int port, QString GRE)
@@ -135,7 +142,7 @@ private slots:
     void GETTERMINALSTATE(QString ip, int port)
     {
         using namespace std;
-        qDebug() << "[GETTERMINALSTATE][Start] " << ip << " " << port << "\n";
+        qDebug() << "[GETTERMINALSTATE][Start] " << ip << " " << port;
         QString Status;
         string buffer;  
         ifstream in("TERMINALSTATE.ini");  
@@ -173,7 +180,7 @@ private slots:
                         QString::number(ElectricQuantity) + "-" + 
                         SupportedBusinessTypes;
         QString msg = Keyword + GRE;
-        qDebug() << "[GETTERMINALSTATE][Start] " << ip << " " << port << " " << msg <<"\n";
+        qDebug() << "[GETTERMINALSTATE][Start] " << ip << " " << port << " " << msg;
         udpClient::SendMsg(msg.toStdString(), ip.toStdString(), port);
 
     };

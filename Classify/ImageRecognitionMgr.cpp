@@ -41,11 +41,13 @@ void ImageRecognitionMgr::IMAGE_RECOGNITION_TASK(QString ip, int port, QString G
     m_strip = ip;
     m_iport = port;
     m_strFilename = GRE;
-    runImageRecognitionMgr();
+    qDebug() << "[ImageRecognitionMgr::IMAGE_RECOGNITION_TASK]" << ip << " " << QString::number(port) << " " << GRE; 
+    runImageRecognitionMgr(GRE);
 }
 
-void ImageRecognitionMgr::runImageRecognitionMgr()
+void ImageRecognitionMgr::runImageRecognitionMgr(QString qFileName /* = "./Image.jpg" */)
 {
+    std::string filename = qFileName.toStdString();
     if(!Py_IsInitialized())
     {
         #ifdef _WIN32
@@ -55,7 +57,11 @@ void ImageRecognitionMgr::runImageRecognitionMgr()
         m_isRunAble = true;
     }
     pFunc = PyObject_GetAttrString(pModule, "ImageRecognition");//这里是要调用的函数名
-    PyObject* pRet = PyObject_CallObject(pFunc, NULL);//调用函数
+
+    PyObject* pArgs = PyTuple_New(1);
+    PyTuple_SetItem(pArgs, 0, Py_BuildValue("s", filename));
+
+    PyObject* pRet = PyObject_CallObject(pFunc, pArgs);//调用函数
     int res = 99;
     PyArg_Parse(pRet,"i",&res);//转换返回类型
     cout << "res:" << res << endl;//输出结果

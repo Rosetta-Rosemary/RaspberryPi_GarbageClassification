@@ -28,9 +28,8 @@ weights_path = './save_weights/ResNet50.h5'
 assert len(glob.glob(weights_path+"*")), "cannot find {}".format(weights_path)
 model.load_weights(weights_path)
 
-def ImageRecognition():
+def ImageRecognition(img_path = "./Image.jpg"):
     # load image
-    img_path = "./Image.jpg"
     assert os.path.exists(img_path), "file: '{}' dose not exist.".format(img_path)
     img = Image.open(img_path)
     # resize image to 224x224
