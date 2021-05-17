@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
 
     TerminalModule *pTerminalModule = TerminalModule::get_instance();
 
+    udpClient::SendMsg("AddClient "+strip, strip, 26602);
+
     LogService::addLog(QString("THIS IS PI_Terminal"));
     return a.exec();
 

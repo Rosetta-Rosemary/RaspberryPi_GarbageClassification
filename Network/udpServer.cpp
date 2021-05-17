@@ -30,7 +30,7 @@ bool udpServer::Init()
 {
     udpsocket = new QUdpSocket();
     udpsocket->bind(m_ipaddr, m_qport);
-        //绑定读取信号
+    //绑定读取信号
     bool bconnect = connect(udpsocket,SIGNAL(readyRead()),
                             this,SLOT(getMsg()));
     if(bconnect)

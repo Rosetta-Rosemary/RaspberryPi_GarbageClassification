@@ -492,7 +492,7 @@ void tcpServer::SendFileHead()
     //发送文件名以及文件大小
     std::string Localip;
     GetLocalIP(Localip);
-    QString FileName = "./Image.jpg";
+    QString FileName = "./Image.jpeg";
     QFileInfo info(FileName);
     filename =info.fileName();
     filesize =info.size();
@@ -514,13 +514,15 @@ void tcpServer::SendFileText()
 {
     qDebug() << "[SendFileText]"; 
         //数据发送
-    if(sendsize<filesize)
+    while(sendsize<filesize)
     {
         //读取一段数据
-        QByteArray array=file.read(1024*10);
+        QByteArray array=file.read(1024*64);
         //发送数据
+        
         m_tcpSocket.write(array);
         sendsize += array.size();
+        qDebug() << "[SendFileText]" << sendsize << "/" << filesize; 
     }
 
     //数据发送完成

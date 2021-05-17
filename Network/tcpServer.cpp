@@ -73,7 +73,6 @@ void tcpServer::RecvFileData()
 {
     //获取连接客户端的连接者
     QTcpSocket *msocket=dynamic_cast<QTcpSocket *>(sender());
-    QString qFilename;
     QString ip = msocket->peerAddress().toString();
     qint16 port = msocket->peerPort();
     //表示读取一个数据，读取文件头信息，将客户端的文件头信息获取到自己的file里面
@@ -94,6 +93,7 @@ void tcpServer::RecvFileData()
         //打开文件
         file.setFileName(filenames);
         file.open(QIODevice::WriteOnly);
+        qDebug() << "[tcpServer::RecvFileData]" << filenames;
         //显示进度条
     }
     //读取文件内容
@@ -103,6 +103,7 @@ void tcpServer::RecvFileData()
         QByteArray array=msocket->readAll();
         file.write(array);
         recvsize += array.size();
+        qDebug() << "[tcpServer::RecvFileData]" << recvsize << "/" << filesize;
     }
     //读取完成
     if(recvsize == filesize)
@@ -124,7 +125,7 @@ void tcpServer::SendFileHead()
     //发送文件名以及文件大小
     std::string Localip;
     GetLocalIP(Localip);
-    QString FileName = "./" + QString::fromStdString(Localip) + "-" + "26602-" + "Image.jpeg";
+    QString FileName = "./" + QString::fromStdString(Localip) + "-" + "26602-" + "Image.jpg";
     QFileInfo info(FileName);
     filename =info.fileName();
     filesize =info.size();

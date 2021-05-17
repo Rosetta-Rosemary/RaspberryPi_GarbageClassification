@@ -58,8 +58,7 @@ void ImageRecognitionMgr::runImageRecognitionMgr(QString qFileName /* = "./Image
     }
     pFunc = PyObject_GetAttrString(pModule, "ImageRecognition");//这里是要调用的函数名
 
-    PyObject* pArgs = PyTuple_New(1);
-    PyTuple_SetItem(pArgs, 0, Py_BuildValue("s", filename));
+    PyObject* pArgs = Py_BuildValue("s", filename);
 
     PyObject* pRet = PyObject_CallObject(pFunc, pArgs);//调用函数
     int res = 99;
@@ -82,7 +81,7 @@ void ImageRecognitionMgr::TakePicture()
             pFunc= PyObject_GetAttrString(pModule, "TakePicture");//这里是要调用的函数名
             PyEval_CallObject(pFunc, NULL);//调用函数
             std::cout << "get Image " << std::endl;
-            emit(Signal::get_instance()->ImageRecognitionTask(QString("127.0.0.1"),26601,QString("Image.jpeg")));
+            emit(Signal::get_instance()->ImageRecognitionTask(QString("127.0.0.1"),26601,QString("./Image.jpeg")));
         }
         catch(...)
         {

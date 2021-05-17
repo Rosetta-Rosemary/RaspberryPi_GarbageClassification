@@ -194,6 +194,7 @@ protected:
     quint64 filesize;//文件大小
     quint64 sendsize;//发送文件的大小
     quint64 recvsize;//接受大小
+    QString qFilename;
 };
 
 #endif

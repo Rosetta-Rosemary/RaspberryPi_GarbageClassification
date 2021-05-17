@@ -1,19 +1,51 @@
+# -*- coding: UTF-8 -*-
 import os
 import numpy as np
 from tensorflow.keras.preprocessing import image
 import tensorflow as tf 
-model = tf.keras.models.load_model("./model_garbage_vgg16.h5")
+from model import resnet50
+import json
+from PIL import Image
+import glob
 import sys
 from picamera import PiCamera
 
-def ImageRecognition():
-    filepath = "./Image.jpeg"
-    img = image.load_img(filepath,target_size=(150,150))
-    x = np.expand_dims(image.img_to_array(img),axis=0)
-    images = np.vstack([x])
-    classes = model.predict(images,batch_size=10)
-    acc = np.argmax(classes)
-    return acc
+im_height = 224
+im_width = 224
+num_classes = 20
+
+feature = resnet50(num_classes=num_classes, include_top=False)
+feature.trainable = False
+model = tf.keras.Sequential([feature,
+                             tf.keras.layers.GlobalAvgPool2D(),
+                             tf.keras.layers.Dropout(rate=0.5),
+                             tf.keras.layers.Dense(1024, activation="relu"),
+                             tf.keras.layers.Dropout(rate=0.5),
+                             tf.keras.layers.Dense(num_classes),
+                             tf.keras.layers.Softmax()])
+
+weights_path = './save_weights/ResNet50.h5'
+assert len(glob.glob(weights_path+"*")), "cannot find {}".format(weights_path)
+model.load_weights(weights_path)
+
+def ImageRecognition(img_path = "./Image.jpeg"):
+    # load image  
+    if not os.path.exists(img_path):
+        img_path = "./Image.jpeg"
+    # assert os.path.exists(img_path), "file: '{}' dose not exist.".format(img_path)
+    img = Image.open(img_path)
+    
+    # resize image to 224x224
+    img = img.resize((im_width, im_height))
+    _R_MEAN = 123.68
+    _G_MEAN = 116.78
+    _B_MEAN = 103.94
+    img = np.array(img).astype(np.float32)
+    img = img - [_R_MEAN, _G_MEAN, _B_MEAN]
+    img = (np.expand_dims(img, 0))
+    result = np.squeeze(model.predict(img))
+    predict_class = np.argmax(result)
+    return predict_class
 
 def TakePicture():
     camera = PiCamera()   

@@ -13,7 +13,7 @@ Network::Network()
         std::string strBoardcastiP = Network::getBoardcastAddress();
         udpClient::SendMsg(std::string("AddServer ") + LoaclIp,strBoardcastiP,26602);
     }
-    TimerRun();
+    // TimerRun();
 }
 
 Network::~Network()

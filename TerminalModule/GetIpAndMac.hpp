@@ -122,7 +122,7 @@ static bool GetLocalIP(std::string &Ip)
 	int ret_val = get_ipv4_linux(ipv4);
 	if (0 != ret_val)
 	{
-    	cout << "error, ipv4, id = " << ret_val << endl;
+    	// cout << "error, ipv4, id = " << ret_val << endl;
 		Ip = "ERROR";
 		return false;
 	}
@@ -131,8 +131,8 @@ static bool GetLocalIP(std::string &Ip)
     	int index = 0;
     	for (auto item: ipv4)
     	{
-        	cout << "index = " << ++index;
-        	cout << ", ipv4 = " << item.c_str() << endl;
+        	// cout << "index = " << ++index;
+        	// cout << ", ipv4 = " << item.c_str() << endl;
 			Ip = item.c_str();
     	}
 	}
@@ -148,8 +148,8 @@ static bool GetLocalIP(std::string &Ip)
     	int index = 0;
     	for (auto item: ipv6)
     	{
-        	cout << "index = " << ++index;
-        	cout << ", ipv6 = " << item.c_str() << endl;
+        	// cout << "index = " << ++index;
+        	// cout << ", ipv6 = " << item.c_str() << endl;
     	}
 	}
 */
