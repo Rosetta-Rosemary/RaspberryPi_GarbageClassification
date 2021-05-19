@@ -51,16 +51,18 @@ void ImageRecognitionMgr::runImageRecognitionMgr(QString qFileName /* = "./Image
     if(!Py_IsInitialized())
     {
         #ifdef _WIN32
-        Py_SetPythonHome(L"C:/Users/Rosetta/.conda/envs/Python7");
+            Py_SetPythonHome(L"C:/Users/Rosetta/.conda/envs/Python7");
         #endif
         Py_Initialize();
         m_isRunAble = true;
     }
+
     pFunc = PyObject_GetAttrString(pModule, "ImageRecognition");//这里是要调用的函数名
 
-    PyObject* pArgs = Py_BuildValue("s", filename);
+    // 指定识别文件，还没调试好
+    // PyObject* pArgs = Py_BuildValue("s", ImageFilePath);
 
-    PyObject* pRet = PyObject_CallObject(pFunc, pArgs);//调用函数
+    PyObject* pRet = PyObject_CallObject(pFunc, NULL);//调用函数
     int res = 99;
     PyArg_Parse(pRet,"i",&res);//转换返回类型
     cout << "res:" << res << endl;//输出结果

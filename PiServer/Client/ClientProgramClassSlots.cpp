@@ -10,6 +10,9 @@ void ClientProgram::SlotInit()
             this,SLOT(slot_Delete_ClientStatus(QString, int, QString)));
     connect(Signal::get_instance(),SIGNAL(GetClientStatus(QString)),
              this,SLOT(slot_Get_TerminalState(QString)));
+    connect(this, SIGNAL(getFileSuccess(QString)),
+            KeywordAnalsys::get_instacne(),SLOT(runKeywordAnalsys(QString)));
+            
 }
 
 void ClientProgram::slot_Exit()
@@ -275,6 +278,34 @@ void ClientProgram::slot_ExitTheServer()
 {
     QString Keyword = QString("EXIT");
     Network::SendMsgToServer(Keyword);
+}
+
+void ClientProgram::slot_OpenImage()
+{   
+    //File->start();.
+    QString filePath = QFileDialog::getOpenFileName(this);
+    if (filePath != "")
+    {
+        QString Ip = "127.0.0.1";
+        QString Port = "26601";
+        QString Keyword = "ImageRecognitionTask";
+        QString GRE = filePath;
+        QString TaskMsg = Ip + " " + Port + " " + Keyword + " " + GRE;
+        FileService *File = FileService::get_instance();
+        if(File->copyPictureToImage(filePath))
+        {
+            qDebug() << "[slot_OpenImage]" << filePath;
+            emit((getFileSuccess(TaskMsg)));
+        }
+        else
+        {
+            qDebug() << "[slot_OpenImage][ERROR][RETURN]" << filePath;
+        }
+    }
+    else
+    {
+
+    }
 }
 
 void ClientProgram::mouseMoveEvent(QMouseEvent *event)

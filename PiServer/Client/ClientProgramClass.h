@@ -19,7 +19,9 @@
 #include <QSequentialAnimationGroup>
 #include <QGraphicsOpacityEffect>
 #include <QScrollBar>
+#include <QFileDialog>//文件对话框
 
 #include <vector>
 
+#include <FileService.h>
 #endif

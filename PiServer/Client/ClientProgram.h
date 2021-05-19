@@ -49,6 +49,7 @@ public:
     ~ClientProgram();
 
 signals:
+    void getFileSuccess(QString str);
 
 private slots:
     void slot_Exit();
@@ -73,6 +74,7 @@ private slots:
     void slot_TakePicture();
     void slot_ExitTheClient();
     void slot_ExitTheServer();
+    void slot_OpenImage();
 
 private:
     explicit ClientProgram(QWidget *parent = nullptr);
@@ -103,6 +105,7 @@ protected:
     QPushButton *PB_ShowOrHide;
     QLabel *L_Server;
     QLabel *L_ServerPort;
+    QPushButton *PB_OpenImage;
     
     QWidget *W_LogShow;//QWidget->用来显示服务器上的处理结果
     QScrollArea *SA_LogShow;

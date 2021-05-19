@@ -26,6 +26,16 @@ void ClientProgram::GuiStatusBarInit()
                                                 "padding-left:3px;padding-top:3px;}");
     connect(PB_ShowOrHide,SIGNAL(clicked()),this,SLOT(slot_Exit()));
 
+    PB_OpenImage = new QPushButton("本地识别", W_StatusBar);
+    PB_OpenImage->setGeometry(50,2,80,26);
+    PB_OpenImage->setStyleSheet( "QPushButton{color:white;background-color: rgb(14, 150, 254); \n" \
+                                        "border-radius:10px;font: bold 14pt \"微软雅黑\"; } \n" \
+                            "QPushButton:hover{background-color: rgb(9, 104, 177);} \n" \
+                            "QPushButton:pressed{background-color:rgb(14 , 135 , 228);\n" \
+                                                "padding-left:3px;padding-top:3px;}");
+    connect(PB_OpenImage, SIGNAL(clicked()), this, SLOT(slot_OpenImage()));
+    
+
     L_Server = new QLabel(W_StatusBar);
     L_Server->setGeometry(163, 2, 125, 26);
     L_Server->setStyleSheet("color:black;background-color: rgb(255, 255, 255);border-radius:10px;font: bold 10pt \"微软雅黑\";");

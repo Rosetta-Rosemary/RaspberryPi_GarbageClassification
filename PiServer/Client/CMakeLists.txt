@@ -13,6 +13,7 @@ include_directories("${PROJECT_SOURCE_DIR}/XmlReader")
 include_directories("${PROJECT_SOURCE_DIR}/KeywordAnalsys")
 include_directories("${PROJECT_SOURCE_DIR}/ClientTarget")
 include_directories("${PROJECT_SOURCE_DIR}/Network")
+include_directories("${PROJECT_SOURCE_DIR}/FileService")
 
 
 add_library(ClientProgram_shared SHARED ${DIR_SRCS})
@@ -31,3 +32,4 @@ target_link_libraries(ClientProgram_shared LogService_shared)
 target_link_libraries(ClientProgram_shared KeywordAnalsys_shared)
 target_link_libraries(ClientProgram_shared ClientTarget_shared)
 target_link_libraries(ClientProgram_shared Network_shared)
+target_link_libraries(ClientProgram_shared FileService_shared) 
